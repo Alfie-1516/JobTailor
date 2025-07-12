@@ -27,10 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col mr-20 ml-20 `}
       >
         <CustomHeader />
-        <main className="flex-1  bg-white overflow-hidden">
+        <main className="flex-1 flex bg-white overflow-hidden justify-center">
           {children}
         </main>
         <CustomFooter />
