@@ -1,34 +1,21 @@
-import React from 'react';
+"use client"
+import React, { useState, useEffect} from 'react';
 import { Steps } from 'antd';
+import './dashboard.css';
+import Content from './dashboard_components/content';
 
 const description = 'This is a description.';
 
-const Dashboard: React.FC = () => (
-    <>
-        <style>
-            {`
-                .ant-steps-item-process .ant-steps-item-icon {
-                    background-color: #22c55e !important;
-                    border-color: #22c55e !important;
-                }
-                .ant-steps-item-finish .ant-steps-item-icon {
-                    background-color: #22c55e !important;
-                    border-color: #22c55e !important;
-                }
-                .ant-steps-item-finish .ant-steps-item-icon .ant-steps-icon {
-                    color: white !important;
-                }
-                .ant-steps-item-finish .ant-steps-item-tail::after {
-                    background-color: #22c55e !important;
-                }
-                .ant-steps-item-process .ant-steps-item-tail::after {
-                    background-color: #22c55e !important;
-                }
-            `}
-        </style>
+export default function Dashboard() {
+    const [currentPage, setCurrentPage] = useState(0);
+    return (
+    <div className="w-full h-full flex">
+        
+        <div className='w-[20rem] pt-20'>
         <Steps
+                className=' h-full'
             direction="vertical"
-            current={2}
+            current={currentPage}
             items={[
                 {
                     title: 'Paste your Job Description',
@@ -39,20 +26,17 @@ const Dashboard: React.FC = () => (
                     description,
                 },
                 {
-                    title: 'Generating your Resume',
+                    title: 'Generating your Files',
                     description,
                 },
                 {
-                    title: 'Generating your Cover Letter',
+                    title: 'Completed',
                     description,
-                },
-                {
-                    title: 'Generating your Interview Notes',
-                    description,
-                },
+                }
             ]}
-        />
-    </>
+        /></div>
+        <div className=" flex-1  "> <Content setCurrentPage={setCurrentPage} /></div>
+           
+    </div>
 );
-
-export default Dashboard;
+}

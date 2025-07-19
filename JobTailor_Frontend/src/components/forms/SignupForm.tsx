@@ -2,6 +2,7 @@ import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
+import '../../app/common.css';
 
 export default function SignupForm() {
     type FieldType = {
@@ -109,13 +110,13 @@ export default function SignupForm() {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" size="large" className="w-full" style={{ borderRadius: '30px' }}>
+                    <Button type="primary" htmlType="submit" size="large" className="w-full custom_button" >
                         Sign Up
                     </Button>
                 </Form.Item>
             </Form>
             <p className="text-sm text-gray-500 text-center mt-4">
-                Already have an account? <Link href={routes.login} className="text-blue-600 hover:text-blue-800 hover:underline">Login</Link>
+                Already have an account? <Link href={routes.login} className="custom_link">Login</Link>
             </p>
         </div>
     )

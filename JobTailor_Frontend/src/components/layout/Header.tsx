@@ -108,7 +108,7 @@ export default function CustomHeader() {
 
 
                     <ResizablePanel defaultSize={25} className="flex justify-end items-center ">
-                        <Button className="bg-green-500 text-white" onClick={() => router.push(routes.login)}>Get Started</Button>
+                        <Button className="bg-green-500 text-white rounded-full" onClick={() => router.push(routes.login)}>Get Started</Button>
                     </ResizablePanel>
                 </ResizablePanelGroup>
             </div>

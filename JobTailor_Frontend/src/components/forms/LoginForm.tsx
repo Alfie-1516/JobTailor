@@ -2,6 +2,7 @@ import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
+import '../../app/common.css';
 
 export default function LoginForm() {
     type FieldType = {
@@ -56,17 +57,17 @@ export default function LoginForm() {
                 </Form.Item>
 
                 <Form.Item<FieldType> name="remember" valuePropName="checked">
-                    <Checkbox>Remember me</Checkbox>
+                    <Checkbox >Remember me</Checkbox>
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" size="large" className="w-full" style={{ borderRadius: '30px' }}>
+                    <Button type="primary" htmlType="submit" size="large" className="w-full custom_button" style={{ borderRadius: '30px' }}>
                         Login
                     </Button>
                 </Form.Item>
             </Form>
             <p className="text-sm text-gray-500 text-center mt-4">
-                Don't have an account? <Link href={routes.signup} className="text-blue-600 hover:text-blue-800 hover:underline">Sign up</Link>
+                Don't have an account? <Link href={routes.signup} className="custom_link">Sign up</Link>
             </p>
         </div>
     )
