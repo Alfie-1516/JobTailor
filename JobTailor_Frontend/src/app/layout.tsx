@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import CustomHeader from "@/components/layout/Header";
 import CustomFooter from "@/components/layout/Footer";
+import { UserProvider } from "@/context/UserContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Job Tailor - Your Personalized Job Search Platform",
-  description: "Find the perfect career opportunity with Job Tailor's personalized job search platform.",
+  description:
+    "Find the perfect career opportunity with Job Tailor's personalized job search platform.",
 };
 
 export default function RootLayout({
@@ -31,7 +33,7 @@ export default function RootLayout({
       >
         <CustomHeader />
         <main className="flex-1 flex bg-white overflow-hidden justify-center">
-          {children}
+          <UserProvider>{children}</UserProvider>
         </main>
         <CustomFooter />
       </body>
