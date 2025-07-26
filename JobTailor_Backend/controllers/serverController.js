@@ -5,7 +5,7 @@ dotenv.config();
 
 const client = new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
-    apiKey: "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",
+    apiKey: "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",
 });
 
 export const generateResume = async (req, res) => {
@@ -18,7 +18,7 @@ export const generateResume = async (req, res) => {
     
     try{
         const completion = await client.chat.completions.create({
-            model: "tngtech/deepseek-r1t2-chimera:free",
+            model: "google/gemma-3n-e2b-it:free",
             messages: [
                 {
                     role: "system",

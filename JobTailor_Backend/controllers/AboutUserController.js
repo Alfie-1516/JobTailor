@@ -25,7 +25,8 @@ export const getAllAboutUsers = async (req, res) => {
 export const getAboutUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const aboutUser = await About_User.findById(id)
+    // Search by userId field, not by _id
+    const aboutUser = await About_User.findOne({ userId: id })
       .populate("userId", "firstName lastName email")
       .select("-__v");
 

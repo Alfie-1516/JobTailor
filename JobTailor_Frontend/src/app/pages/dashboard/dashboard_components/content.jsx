@@ -24,11 +24,11 @@ export default function Content({ setCurrentPage }) {
 
   return (
     <div
-      className="w-full h-full overflow-y-scroll scroll-smooth snap-y snap-mandatory bg-red-300"
+      className="w-full h-full overflow-y-scroll scroll-smooth snap-y snap-mandatory "
       ref={containerRef}
     >
       {/* Page 1 */}
-      <div className="w-full h-full  flex items-center bg-amber-500 justify-center snap-start p-20">
+      <div className="w-full h-full  flex items-center  justify-center snap-start p-20">
         <Stage1 />
       </div>
 

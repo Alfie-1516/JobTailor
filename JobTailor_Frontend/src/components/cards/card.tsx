@@ -31,7 +31,12 @@ export default function Card({ information: information, title }: { information:
     const handleFieldChange = (dataIndex: number, fieldKey: string, newValue: string) => {
         const newData = [...editedData];
         if (newData[dataIndex] && newData[dataIndex][fieldKey]) {
-            newData[dataIndex][fieldKey].value = newValue;
+            // Handle both formats: {label, value} and direct values
+            if (typeof newData[dataIndex][fieldKey] === 'object' && 'value' in newData[dataIndex][fieldKey]) {
+                newData[dataIndex][fieldKey].value = newValue;
+            } else {
+                newData[dataIndex][fieldKey] = newValue;
+            }
             setEditedData(newData);
         }
     };
@@ -75,7 +80,9 @@ export default function Card({ information: information, title }: { information:
                     <div key={data.id || dataIndex} className="border-l-4 border-green-500 pl-4 pb-4">
                         <div className="space-y-2">
                             {Object.entries(data).map(([key, item]: [string, any]) => {
+                                // Handle both formats: {label, value} and direct values
                                 if (typeof item === 'object' && item !== null && 'label' in item) {
+                                    // Original format with label and value
                                     return (
                                         <div key={item.label} className={`flex ${item.label === 'Description' ? 'items-start' : 'items-center'}`}>
                                             <span className="font-semibold text-black w-24">{item.label}:</span>
@@ -99,6 +106,35 @@ export default function Card({ information: information, title }: { information:
                                                 )
                                             ) : (
                                                 <span className="text-gray-900 flex-1">{item.value || 'Not specified'}</span>
+                                            )}
+                                        </div>
+                                    );
+                                } else if (typeof item !== 'object' || item === null) {
+                                    // Direct value format (for work experience data)
+                                    const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+                                    return (
+                                        <div key={key} className={`flex ${key === 'description' ? 'items-start' : 'items-center'}`}>
+                                            <span className="font-semibold text-black w-24">{label}:</span>
+                                            {isEditing ? (
+                                                key === 'description' ? (
+                                                    <textarea
+                                                        value={item || ''}
+                                                        onChange={(e) => handleFieldChange(dataIndex, key, e.target.value)}
+                                                        className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                                                        placeholder={`Enter ${label.toLowerCase()}`}
+                                                        rows={3}
+                                                    />
+                                                ) : (
+                                                    <input
+                                                        type="text"
+                                                        value={item || ''}
+                                                        onChange={(e) => handleFieldChange(dataIndex, key, e.target.value)}
+                                                        className="flex-1 border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                                        placeholder={`Enter ${label.toLowerCase()}`}
+                                                    />
+                                                )
+                                            ) : (
+                                                <span className="text-gray-900 flex-1">{item || 'Not specified'}</span>
                                             )}
                                         </div>
                                     );
