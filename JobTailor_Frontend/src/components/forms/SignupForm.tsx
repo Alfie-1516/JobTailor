@@ -3,17 +3,27 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
 import '../../app/common.css';
+import { signup } from '@/api';
 
 export default function SignupForm() {
     type FieldType = {
-        firstname?: string;
-        lastname?: string;
+        firstName?: string;
+        lastName?: string;
         username?: string;
         password?: string;
         reenterPassword?: string;
+        email?: string;
         agree?: boolean;
     };
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+        const data = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            username: values.username,
+            email: values.email,
+            password: values.password,
+        }
+        signup(data);
         console.log('Success:', values);
     };
 
@@ -37,7 +47,7 @@ export default function SignupForm() {
 
                 <Form.Item<FieldType>
                     label="First Name"
-                    name="firstname"
+                    name="firstName"
                     rules={[{ required: true, message: 'Please input your first name!' }]}
                 >
                     <Input
@@ -49,7 +59,7 @@ export default function SignupForm() {
 
                 <Form.Item<FieldType>
                     label="Last Name"
-                    name="lastname"
+                    name="lastName"
                     rules={[{ required: true, message: 'Please input your last name!' }]}
                 >
                     <Input
@@ -67,6 +77,17 @@ export default function SignupForm() {
                     <Input
                         size="large"
                         placeholder="Enter your username"
+                        className="bg-gray-50 placeholder:text-sm placeholder:text-gray-500 focus:bg-white focus:border-blue-500"
+                    />
+                </Form.Item>
+                <Form.Item<FieldType>
+                    label="Email"
+                    name="email"
+                    rules={[{ required: true, message: 'Please input your email!' }]}
+                >
+                    <Input
+                        size="large"
+                        placeholder="Enter your email"
                         className="bg-gray-50 placeholder:text-sm placeholder:text-gray-500 focus:bg-white focus:border-blue-500"
                     />
                 </Form.Item>

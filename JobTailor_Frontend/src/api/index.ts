@@ -22,6 +22,14 @@ export async function test_api() {
   });
 }
 
+export async function signup(data: any) {
+  return handleFetch(`${API_BASE_URL}/users/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function login(username: string, password: string) {
   return await handleFetch(`${API_BASE_URL}/users/login`, {
     method: "POST",
