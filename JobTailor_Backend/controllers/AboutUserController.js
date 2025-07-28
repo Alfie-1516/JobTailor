@@ -50,34 +50,6 @@ export const getAboutUserById = async (req, res) => {
   }
 };
 
-// Get about user profile by user ID
-export const getAboutUserByUserId = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const aboutUser = await About_User.findOne({ userId })
-      .populate("userId", "firstName lastName email")
-      .select("-__v");
-
-    if (!aboutUser) {
-      return res.status(404).json({
-        success: false,
-        message: "About user profile not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: aboutUser,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching about user",
-      error: error.message,
-    });
-  }
-};
-
 // Create new about user profile
 export const createAboutUser = async (req, res) => {
   try {
@@ -118,33 +90,60 @@ export const createAboutUser = async (req, res) => {
 export const updateAboutUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const { section, subsectionId, data } = req.body;
 
-    // Update lastUpdated timestamp
-    updateData.lastUpdated = new Date();
-
-    const aboutUser = await About_User.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    }).populate("userId", "firstName lastName email");
+    // Find the user detail by id
+    const aboutUser = await About_User.findOne({
+      userId: id,
+    })
+      .populate("userId", "firstName lastName email")
+      .select("-__v");
 
     if (!aboutUser) {
-      return res.status(404).json({
-        success: false,
-        message: "About user profile not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Profile not found" });
     }
 
-    res.status(200).json({
-      success: true,
-      data: aboutUser,
-    });
+    // If subsectionId is provided, update only that subsection (do not overwrite the whole array)
+    if (
+      section &&
+      subsectionId &&
+      data !== undefined &&
+      Array.isArray(aboutUser[section])
+    ) {
+      // Find the index of the item to update
+      const itemIndex = aboutUser[section].findIndex(
+        (item) => item._id.toString() === subsectionId
+      );
+
+      if (itemIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: "Subsection item not found",
+          section: section,
+          subsectionId: subsectionId,
+          data: data,
+        });
+      }
+
+      // Only update the fields provided in data, keep the rest
+      Object.keys(data).forEach((key) => {
+        aboutUser[section][itemIndex][key] = data[key];
+      });
+
+      aboutUser.lastUpdated = new Date();
+      await aboutUser.save();
+    }
+
+    // Populate userId for response
+    await aboutUser.populate("userId", "firstName lastName email");
+
+    res.status(200).json({ success: true, data: aboutUser });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error updating about user profile",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Update failed", error: error.message });
   }
 };
 
@@ -174,21 +173,11 @@ export const deleteAboutUser = async (req, res) => {
   }
 };
 
-// Update specific sections of about user profile
-export const updateAboutUserSection = async (req, res) => {
+//Add Data to About User Section
+export const addDataToAboutUserSection = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { section, data } = req.body;
-
-    const updateData = {
-      [section]: data,
-      lastUpdated: new Date(),
-    };
-
-    const aboutUser = await About_User.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    }).populate("userId", "firstName lastName email");
+    const { userId, section, data } = req.body;
+    const aboutUser = await About_User.findOne({ userId });
 
     if (!aboutUser) {
       return res.status(404).json({
@@ -197,6 +186,18 @@ export const updateAboutUserSection = async (req, res) => {
       });
     }
 
+    // Initialize section as array if it doesn't exist
+    if (!aboutUser[section]) {
+      aboutUser[section] = [];
+    }
+
+    // Add new data to the section array
+    aboutUser[section].push(data);
+    aboutUser.lastUpdated = new Date();
+    await aboutUser.save();
+
+    await aboutUser.populate("userId", "firstName lastName email");
+
     res.status(200).json({
       success: true,
       data: aboutUser,
@@ -204,7 +205,7 @@ export const updateAboutUserSection = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error updating about user section",
+      message: "Error adding data to about user section",
       error: error.message,
     });
   }

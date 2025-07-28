@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import Stage1 from "./stage1";
 import Stage2 from "./stage2";
 import Stage3 from "./stage3";
-import Stage4 from "./stage4";
 export default function Content({ setCurrentPage }) {
   const containerRef = useRef(null);
 
@@ -38,13 +37,8 @@ export default function Content({ setCurrentPage }) {
       </div>
 
       {/* Page 3 */}
-      <div className="w-full h-full bg-red-500 flex items-center justify-center snap-start">
+      <div className="w-full h-full flex items-center justify-center snap-start">
         <Stage3 />
-      </div>
-
-      {/* Page 4 */}
-      <div className="w-full h-full bg-blue-500 flex items-center justify-center snap-start">
-        <Stage4 />
       </div>
     </div>
   );

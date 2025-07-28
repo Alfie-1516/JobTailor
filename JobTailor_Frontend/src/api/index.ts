@@ -39,6 +39,7 @@ export async function get_user_by_username(username: string) {
 export async function get_user_details(id: string) {
   return handleFetch(`${API_BASE_URL}/about-users/${id}`, {
     method: "GET",
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -52,5 +53,17 @@ export async function create_user_details(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId, firstName, lastName, email }),
+  });
+}
+
+export async function save_form_data(
+  id: string,
+  formData: any,
+  section: string
+) {
+  return handleFetch(`${API_BASE_URL}/about-users/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ section, data: formData }),
   });
 }
