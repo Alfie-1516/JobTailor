@@ -16,19 +16,22 @@ export default function LoginForm() {
     remember?: string;
   };
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    console.log("Success:", values);
-    const response = await login(values.username!, values.password!);
-    if (response.message === "Login successful") {
-      const user = await get_user_by_username(values.username!);
-      setUser(user);
-      router.push(routes.dashboard);
+    try {
+      const response = await login(values.username!, values.password!);
+      if (response.message === "Login successful") {
+        const user = await get_user_by_username(values.username!);
+        setUser(user);
+        router.push(routes.dashboard);
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
   ) => {
-    console.log("Failed:", errorInfo);
+    // Handle form validation errors
   };
   return (
     <div className="bg-white rounded-xl border-1 border-gray-300 shadow-xl shadow-gray-300 p-8 w-96">

@@ -1,54 +1,60 @@
 // src/api/index.ts
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5001/api";
 
-async function handleFetch(url: string, options: RequestInit) {
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Fetch error at ${url}:`, error);
-    throw error; // rethrow for caller to handle if needed
-  }
-}
+// ============================================================================
+// API Configuration
+// ============================================================================
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5001/api";
 
-export async function test_api() {
-  return handleFetch(`${API_BASE_URL}/`, {
-    method: "GET",
+// ============================================================================
+// Utility Functions
+// ============================================================================
+async function makeRequest(url: string, options: RequestInit = {}) {
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
   });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
 }
 
+
+
+// ============================================================================
+// Authentication APIs
+// ============================================================================
 export async function signup(data: any) {
-  return handleFetch(`${API_BASE_URL}/users/`, {
+  return makeRequest(`${API_BASE_URL}/users/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 }
 
 export async function login(username: string, password: string) {
-  return await handleFetch(`${API_BASE_URL}/users/login`, {
+  return makeRequest(`${API_BASE_URL}/users/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
 }
 
+// ============================================================================
+// User Management APIs
+// ============================================================================
 export async function get_user_by_username(username: string) {
-  return handleFetch(`${API_BASE_URL}/users/username/${username}`, {
-    method: "GET",
-  });
+  return makeRequest(`${API_BASE_URL}/users/username/${username}`);
 }
 
+// ============================================================================
+// User Details/Profile APIs
+// ============================================================================
 export async function get_user_details(id: string) {
-  return handleFetch(`${API_BASE_URL}/about-users/${id}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  return makeRequest(`${API_BASE_URL}/about-users/${id}`);
 }
 
 export async function create_user_details(
@@ -57,9 +63,8 @@ export async function create_user_details(
   lastName: string,
   email: string
 ) {
-  return handleFetch(`${API_BASE_URL}/about-users`, {
+  return makeRequest(`${API_BASE_URL}/about-users`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId, firstName, lastName, email }),
   });
 }
@@ -67,11 +72,22 @@ export async function create_user_details(
 export async function save_form_data(
   id: string,
   formData: any,
+  subSectionId: string,
   section: string
 ) {
-  return handleFetch(`${API_BASE_URL}/about-users/${id}`, {
+  return makeRequest(`${API_BASE_URL}/about-users/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ section, data: formData }),
+    body: JSON.stringify({ section, data: formData, subSectionId }),
+  });
+}
+
+export async function delete_form_data(
+  id: string,
+  subSectionId: string,
+  section: string
+) {
+  return makeRequest(`${API_BASE_URL}/about-users/${id}`, {
+    method: "DELETE",
+    body: JSON.stringify({ section, subSectionId }),
   });
 }

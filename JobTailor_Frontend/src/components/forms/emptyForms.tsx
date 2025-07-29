@@ -106,9 +106,9 @@ export const ProjectsForm = [
   "endDate",
 ];
 export const CertificationsForm = [
-  "certificationName",
-  "issuingOrganization",
-  "issueDate",
+  "name",
+  "issuer",
+  "dateObtained",
 ];
 
 const AchievementsForm = ["title", "description", "date"];

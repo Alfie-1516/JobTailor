@@ -12,15 +12,20 @@ type FieldType = {
   jobDescription?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
-};
+export default function Stage1({ onNext }: { onNext?: () => void }) {
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("Stage1 form submitted:", values);
+    // Handle form submission
+    if (onNext) {
+      setTimeout(() => {
+        onNext();
+      }, 100); // Small delay to ensure form submission is complete
+    }
+  };
 
-const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-
-export default function Stage1() {
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
+    // Handle form errors
+  };
   return (
     <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl border border-gray-200">
       <div className="text-center mb-6">

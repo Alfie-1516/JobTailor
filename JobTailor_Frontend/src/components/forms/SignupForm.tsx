@@ -3,9 +3,14 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
 import '../../app/common.css';
-import { signup } from '@/api';
+import { create_user_details, signup, get_user_by_username } from '@/api';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function SignupForm() {
+    const router = useRouter();
+    const { setUser } = useUser();
+    
     type FieldType = {
         firstName?: string;
         lastName?: string;
@@ -15,20 +20,41 @@ export default function SignupForm() {
         email?: string;
         agree?: boolean;
     };
-    const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-        const data = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            username: values.username,
-            email: values.email,
-            password: values.password,
+    
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+        try {
+            const data = {
+                firstName: values.firstName!,
+                lastName: values.lastName!,
+                username: values.username!,
+                email: values.email!,
+                password: values.password!,
+            };
+            
+            // Create user account
+            const signupResponse = await signup(data);
+            // Create user details profile
+            await create_user_details(
+                signupResponse.data._id, 
+                data.firstName, 
+                data.lastName, 
+                data.email
+            );
+            
+            // Get the complete user data and set in context
+            const userData = await get_user_by_username(data.username);
+            setUser(userData);
+            
+            // Navigate to dashboard
+            router.push(routes.dashboard);
+            
+        } catch (error) {
+            console.error('Signup failed:', error);
         }
-        signup(data);
-        console.log('Success:', values);
     };
 
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        // Handle form validation errors
     };
     return (
         <div className="bg-white rounded-xl border-1 border-gray-300 shadow-xl shadow-gray-300 p-8 w-96">

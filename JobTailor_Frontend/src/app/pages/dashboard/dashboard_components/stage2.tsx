@@ -6,19 +6,25 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import "../../../common.css";
 import TipsView from "./tipsView";
 
-export default function Stage2() {
+export default function Stage2({ onNext }: { onNext?: () => void }) {
   type FieldType = {
     extraContext?: string;
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+    console.log("Stage2 form submitted:", values);
+    // Handle form submission
+    if (onNext) {
+      setTimeout(() => {
+        onNext();
+      }, 100); // Small delay to ensure form submission is complete
+    }
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
   ) => {
-    console.log("Failed:", errorInfo);
+    // Handle form errors
   };
 
   return (
