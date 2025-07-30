@@ -6,13 +6,23 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import "../../../common.css";
 import TipsView from "./tipsView";
 
-export default function Stage2({ onNext }: { onNext?: () => void }) {
+export default function Stage2({
+  onNext,
+  onDataSubmit,
+}: {
+  onNext?: () => void;
+  onDataSubmit?: (data: any) => void;
+}) {
   type FieldType = {
     extraContext?: string;
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("Stage2 form submitted:", values);
+    // Pass data to parent component
+    if (onDataSubmit) {
+      onDataSubmit(values);
+    }
     // Handle form submission
     if (onNext) {
       setTimeout(() => {

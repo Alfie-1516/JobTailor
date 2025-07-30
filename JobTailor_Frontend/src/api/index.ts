@@ -3,7 +3,8 @@
 // ============================================================================
 // API Configuration
 // ============================================================================
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5001/api";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5001/api";
 
 // ============================================================================
 // Utility Functions
@@ -23,8 +24,6 @@ async function makeRequest(url: string, options: RequestInit = {}) {
 
   return response.json();
 }
-
-
 
 // ============================================================================
 // Authentication APIs
@@ -89,5 +88,15 @@ export async function delete_form_data(
   return makeRequest(`${API_BASE_URL}/about-users/${id}`, {
     method: "DELETE",
     body: JSON.stringify({ section, subSectionId }),
+  });
+}
+
+export async function generate_resume(
+  jobDescription: string,
+  userDetails: string
+) {
+  return makeRequest(`${API_BASE_URL}/generate-resume`, {
+    method: "POST",
+    body: JSON.stringify({ jobDescription, userDetails }),
   });
 }

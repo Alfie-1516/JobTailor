@@ -12,9 +12,19 @@ type FieldType = {
   jobDescription?: string;
 };
 
-export default function Stage1({ onNext }: { onNext?: () => void }) {
+export default function Stage1({
+  onNext,
+  onDataSubmit,
+}: {
+  onNext?: () => void;
+  onDataSubmit?: (data: FieldType) => void;
+}) {
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("Stage1 form submitted:", values);
+    // Pass data to parent component
+    if (onDataSubmit) {
+      onDataSubmit(values);
+    }
     // Handle form submission
     if (onNext) {
       setTimeout(() => {
@@ -23,7 +33,9 @@ export default function Stage1({ onNext }: { onNext?: () => void }) {
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+    errorInfo
+  ) => {
     // Handle form errors
   };
   return (
