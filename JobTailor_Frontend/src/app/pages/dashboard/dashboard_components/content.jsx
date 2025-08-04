@@ -4,11 +4,10 @@ import Stage1 from "./stage1";
 import Stage2 from "./stage2";
 import Stage3 from "./stage3";
 import { useUser } from "@/context/UserContext";
-import { get_user_details, generate_resume } from "@/api";
+import { get_user_details, generate_resume, generate_cover_letter, generate_interview_notes } from "@/api";
 
 export default function Content({ setCurrentPage }) {
   const { user } = useUser();
-  console.log(user?._id);
   const containerRef = useRef(null);
   const [formData, setFormData] = useState({
     stage1: null,
@@ -36,20 +35,26 @@ export default function Content({ setCurrentPage }) {
   }, [user?._id]);
 
   const scrollToNextPage = () => {
-    const container = containerRef.current;
-    if (container) {
-      const containerHeight = container.clientHeight;
-      const currentPage = Math.round(container.scrollTop / containerHeight);
-      const nextPage = Math.min(currentPage + 1, 2); // Max 3 pages (0, 1, 2)
-      const nextScrollTop = nextPage * containerHeight;
+    try {
+      const container = containerRef.current;
+      if (container) {
+        const containerHeight = container.clientHeight;
+        const currentPage = Math.round(container.scrollTop / containerHeight);
+        const nextPage = Math.min(currentPage + 1, 2); // Max 3 pages (0, 1, 2)
+        const nextScrollTop = nextPage * containerHeight;
 
-      container.scrollTo({
-        top: nextScrollTop,
-        behavior: "smooth",
-      });
+        console.log('Scrolling from page', currentPage, 'to page', nextPage);
 
-      // Update the current page state
-      setCurrentPage(nextPage);
+        container.scrollTo({
+          top: nextScrollTop,
+          behavior: "smooth",
+        });
+
+        // Update the current page state
+        setCurrentPage(nextPage);
+      }
+    } catch (error) {
+      console.error("Error in scrollToNextPage:", error);
     }
   };
 
@@ -73,30 +78,57 @@ export default function Content({ setCurrentPage }) {
   };
 
   const handleStage2Data = async (data) => {
-    setFormData((prev) => ({ ...prev, stage2: data }));
-
-    // Print all collected data after stage2 is submitted
-    console.log("=== ALL COLLECTED DATA ===");
-    console.log("User Details:", userDetails);
-    console.log("Stage 1 Data:", formData.stage1);
-    console.log("Stage 2 Data:", data);
-    console.log("Complete Form Data:", { ...formData, stage2: data });
-
-    // Call generate resume API
     try {
-      const jobDescription = formData.stage1?.jobDescription || "";
-      const userDetailsString = JSON.stringify(userDetails);
+      setFormData((prev) => ({ ...prev, stage2: data }));
 
-      console.log("Calling generate_resume API...");
-      const resumeResult = await generate_resume(
-        jobDescription,
-        userDetailsString
-      );
+      // Print all collected data after stage2 is submitted
+      console.log("=== ALL COLLECTED DATA ===");
+      console.log("User Details:", userDetails);
+      console.log("Stage 1 Data:", formData.stage1);
+      console.log("Stage 2 Data:", data);
+      console.log("Complete Form Data:", { ...formData, stage2: data });
 
-      console.log("=== GENERATED RESUME ===");
-      console.log(resumeResult);
+      // Call generate APIs if we have the required data
+      if (formData.stage1?.jobDescription && userDetails) {
+        const jobDescription = formData.stage1.jobDescription;
+        const userDetailsString = JSON.stringify(userDetails);
+        const companyName = formData.stage1.companyName || "Unknown Company";
+
+        console.log("Calling generate APIs...");
+
+        // Generate Resume
+        console.log("Calling generate_resume API...");
+        const resumeResult = await generate_resume(
+          jobDescription,
+          userDetailsString
+        );
+        console.log("=== GENERATED RESUME ===");
+        console.log(resumeResult);
+
+        // Generate Cover Letter
+        console.log("Calling generate_cover_letter API...");
+        const coverLetterResult = await generate_cover_letter(
+          jobDescription,
+          userDetailsString,
+          companyName
+        );
+        console.log("=== GENERATED COVER LETTER ===");
+        console.log(coverLetterResult);
+
+        // Generate Interview Notes
+        console.log("Calling generate_interview_notes API...");
+        const interviewNotesResult = await generate_interview_notes(
+          jobDescription,
+          userDetailsString,
+          companyName
+        );
+        console.log("=== GENERATED INTERVIEW NOTES ===");
+        console.log(interviewNotesResult);
+      } else {
+        console.log("Missing required data for document generation");
+      }
     } catch (error) {
-      console.error("Error generating resume:", error);
+      console.error("Error in handleStage2Data:", error);
     }
   };
 

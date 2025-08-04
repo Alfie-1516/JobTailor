@@ -11,7 +11,7 @@ if (!process.env.OPENROUTER_API_KEY) {
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey:
-    "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",
+    "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",
 });
 
 export const generateResume = async (req, res) => {

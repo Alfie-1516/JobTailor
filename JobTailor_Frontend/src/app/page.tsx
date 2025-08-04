@@ -1,7 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import { ChevronRightIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { routes } from "@/constants/routes";
 
 export default function HeroSectionSimpleCentred() {
+  const router = useRouter();
   return (
     <>
       {/* Hero */}
@@ -25,9 +28,9 @@ export default function HeroSectionSimpleCentred() {
           </div>
           {/* Buttons */}
           <div className="mt-8 flex justify-center gap-3">
-            <Button size={"lg"}>Create Resume</Button>
-            <Button size={"lg"} variant={"outline"}>
-              Build Profile
+            <Button size={"lg"} onClick={() => router.push(routes.login)}>Login</Button>
+            <Button size={"lg"} variant={"outline"} onClick={() => router.push(routes.signup)}>
+              Signup
             </Button>
           </div>
           {/* End Buttons */}
@@ -45,19 +48,9 @@ export default function HeroSectionSimpleCentred() {
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path
-                d="M6 13L10 3"
-                stroke="currentColor"
-                strokeLinecap="round"
-              />
+             
             </svg>
-            <a
-              className="inline-flex items-center gap-x-1 text-sm font-medium decoration-2 hover:underline"
-              href="#"
-            >
-              Success Stories
-              <ChevronRightIcon className="h-4 w-4 flex-shrink-0" />
-            </a>
+            
           </div>
         </div>
       </div>

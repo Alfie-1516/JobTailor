@@ -4,8 +4,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Card from "@/components/cards/card";
 import { get_user_details } from "@/api";
 import { useUser } from "@/context/UserContext";
+import { Empty } from 'antd';
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { routes } from "@/constants/routes";
 
 export default function Details() {
+  const router = useRouter();
   const { user } = useUser();
   const [userDetails, setUserDetails] = useState<any>({});
 
@@ -32,6 +37,12 @@ export default function Details() {
   return (
     <div className="h-full w-1/2 ">
       <ScrollArea className="rounded-lg border h-full p-4 ">
+        {userDetails && (
+          <div className="flex flex-col gap-4 justify-center items-center">
+            <Empty description="No user details found" />
+            <Button className="w-[10rem]" variant={"default"} onClick={() => router.push(routes.login)}>Login</Button>
+          </div>
+        )}
      
         {Object.keys(userDetails || {}).map((key) => {
           if (

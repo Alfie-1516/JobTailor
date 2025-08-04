@@ -100,3 +100,25 @@ export async function generate_resume(
     body: JSON.stringify({ jobDescription, userDetails }),
   });
 }
+
+export async function generate_cover_letter(
+  jobDescription: string,
+  userDetails: string,
+  companyName: string
+) {
+  return makeRequest(`${API_BASE_URL}/generate-cover-letter`, {
+    method: "POST",
+    body: JSON.stringify({ jobDescription, userDetails, companyName }),
+  });
+}
+
+export async function generate_interview_notes(
+  jobDescription: string,
+  userDetails: string,
+  companyName: string
+) {
+  return makeRequest(`${API_BASE_URL}/generate-interview-notes`, {
+    method: "POST",
+    body: JSON.stringify({ jobDescription, userDetails, companyName }),
+  });
+}
