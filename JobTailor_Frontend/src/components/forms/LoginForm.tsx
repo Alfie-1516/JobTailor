@@ -21,7 +21,7 @@ export default function LoginForm() {
       if (response.message === "Login successful") {
         const user = await get_user_by_username(values.username!);
         setUser(user);
-        router.push(routes.dashboard);
+        router.push(routes.home);
       }
     } catch (error) {
       console.error("Login failed:", error);

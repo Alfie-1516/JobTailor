@@ -104,7 +104,7 @@ const aboutUserSchema = new mongoose.Schema(
     ],
 
     // Skills
-    technicalSkills: {
+    technicalSkills: [{
       programmingLanguages: String,
       frameworks: String,
       databases: String,
@@ -112,7 +112,7 @@ const aboutUserSchema = new mongoose.Schema(
       softwares: String,
       cloudPlatforms: String,
       methodologies: String,
-    },
+    }],
     languages: [
       {
         language: String,
@@ -190,8 +190,6 @@ const aboutUserSchema = new mongoose.Schema(
 // Index for better query performance
 aboutUserSchema.index({ userId: 1 });
 aboutUserSchema.index({ email: 1 });
-aboutUserSchema.index({ "jobPreferences.desiredRole": 1 });
-aboutUserSchema.index({ "technicalSkills.programmingLanguages": 1 });
 
 const About_User = mongoose.model("About_User", aboutUserSchema);
 

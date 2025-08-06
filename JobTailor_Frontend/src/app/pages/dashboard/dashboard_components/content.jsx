@@ -5,6 +5,7 @@ import Stage2 from "./stage2";
 import Stage3 from "./stage3";
 import { useUser } from "@/context/UserContext";
 import { get_user_details, generate_resume, generate_cover_letter, generate_interview_notes } from "@/api";
+import { generateResumeHTML } from "@/components/templates/resume";
 
 export default function Content({ setCurrentPage }) {
   const { user } = useUser();
@@ -103,7 +104,31 @@ export default function Content({ setCurrentPage }) {
           userDetailsString
         );
         console.log("=== GENERATED RESUME ===");
-        console.log(resumeResult);
+        const htmlContent = generateResumeHTML(resumeResult);
+        console.log(htmlContent);
+        
+        // Save to resume.txt file
+        try {
+          const response = await fetch('/api/save-resume', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              htmlContent: htmlContent
+            })
+          });
+          
+          if (response.ok) {
+            console.log("Resume HTML saved to resume.txt");
+          } else {
+            console.error("Failed to save resume HTML");
+          }
+        } catch (error) {
+          console.error("Error saving resume HTML:", error);
+        }
+
+        
 
         // Generate Cover Letter
         console.log("Calling generate_cover_letter API...");

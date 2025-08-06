@@ -22,6 +22,7 @@ export default function Details() {
         const details = await get_user_details(user._id);
         if (details.success) {
           setUserDetails(details.data);
+          console.log(details.data);
         } else {
           // No user details found - this is normal for new users
         }
@@ -37,7 +38,7 @@ export default function Details() {
   return (
     <div className="h-full w-1/2 ">
       <ScrollArea className="rounded-lg border h-full p-4 ">
-        {userDetails && (
+        {!user?._id && (
           <div className="flex flex-col gap-4 justify-center items-center">
             <Empty description="No user details found" />
             <Button className="w-[10rem]" variant={"default"} onClick={() => router.push(routes.login)}>Login</Button>

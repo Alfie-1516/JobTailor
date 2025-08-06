@@ -1,22 +1,15 @@
 "use client";
 
 import { routes } from "@/constants/routes";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Menubar,
-  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useUser } from "@/context/UserContext";
 
 import { useRouter } from "next/navigation";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -25,7 +18,11 @@ import { Tabs } from "antd";
 import { Menu } from "lucide-react";
 export default function CustomHeader() {
   const router = useRouter();
+  const { user } = useUser();
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
   return (
     <>
       <style>
@@ -103,7 +100,7 @@ export default function CustomHeader() {
                   <MenubarItem onClick={() => router.push(routes.dashboard)}>
                     Dashboard
                   </MenubarItem>
-                  <MenubarItem onClick={() => router.push(routes.details(1))}>
+                  <MenubarItem onClick={() => router.push(routes.details)}>
                     Details
                   </MenubarItem>
                 </MenubarContent>
@@ -115,12 +112,21 @@ export default function CustomHeader() {
             defaultSize={25}
             className="flex justify-end items-center "
           >
-            <Button
-              className="bg-green-500 text-white rounded-full"
-              onClick={() => router.push(routes.login)}
-            >
-              Get Started
-            </Button>
+            {user?._id ? (
+              <Button
+                className="bg-green-500 text-white rounded-full"
+                onClick={() => router.push(routes.login)}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                className="bg-green-500 text-white rounded-full"
+                onClick={() => router.push(routes.login)}
+              >
+                Get Started
+              </Button>
+            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

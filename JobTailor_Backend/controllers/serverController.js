@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import { prompt } from "../util/prompt.js";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ if (!process.env.OPENROUTER_API_KEY) {
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey:
-    "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",
+    "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",
 });
 
 export const generateResume = async (req, res) => {
@@ -27,8 +28,7 @@ export const generateResume = async (req, res) => {
       messages: [
         {
           role: "system",
-          content:
-            "You are an expert career assistant that generates resumes based on job descriptions and user details. Respond with JSON containing 'resumeText' of 600 words minimum.",
+          content: prompt,
         },
         {
           role: "user",
