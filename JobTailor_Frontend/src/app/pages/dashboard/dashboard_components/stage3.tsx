@@ -11,13 +11,30 @@ import {
 import "../../../common.css";
 import LoadingCard from "../../../../components/cards/loadingCard";
 
-export default function Stage3() {
+export default function Stage3({
+  resumeGenerated,
+  coverLetterGenerated,
+  interviewNotesGenerated,
+}: {
+  resumeGenerated: boolean;
+  coverLetterGenerated: boolean;
+  interviewNotesGenerated: boolean;
+}) {
   const [resumeProgress, setResumeProgress] = useState(0);
   const [coverLetterProgress, setCoverLetterProgress] = useState(0);
   const [interviewNotesProgress, setInterviewNotesProgress] = useState(0);
   const [isGenerating, setIsGenerating] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
 
+  // Check if all files are generated
+  useEffect(() => {
+    if (resumeGenerated && coverLetterGenerated && interviewNotesGenerated) {
+      setIsGenerating(false);
+      setIsComplete(true);
+    }
+  }, [resumeGenerated, coverLetterGenerated, interviewNotesGenerated]);
+
+  // Simulate progress while waiting for files
   useEffect(() => {
     if (!isGenerating) return;
     const interval = setInterval(() => {
@@ -39,6 +56,31 @@ export default function Stage3() {
     }, 600);
     return () => clearInterval(interval);
   }, [isGenerating]);
+
+  const downloadAllFiles = async () => {
+    const files = [
+      { name: "Resume", path: "/files/resume.pdf" },
+      { name: "Cover Letter", path: "/files/coverLetter.pdf" },
+      { name: "Interview Notes", path: "/files/interviewNotes.pdf" },
+    ];
+
+    for (const file of files) {
+      try {
+        const response = await fetch(file.path);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${file.name}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error(`Error downloading ${file.name}:`, error);
+      }
+    }
+  };
 
   const getOverallProgress = () => {
     return Math.round(
@@ -148,9 +190,12 @@ export default function Stage3() {
         <div className="flex space-x-4 mt-5">
           {isComplete ? (
             <>
-              <button className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-full transition-colors duration-200 flex items-center justify-center space-x-2">
+              <button
+                onClick={downloadAllFiles}
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-full transition-colors duration-200 flex items-center justify-center space-x-2"
+              >
                 <DownloadIcon className="w-5 h-5" />
-                <span>Download All</span>
+                <span>Download All PDFs</span>
               </button>
             </>
           ) : (

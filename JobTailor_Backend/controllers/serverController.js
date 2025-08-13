@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
-import { prompt } from "../util/prompt.js";
+import { prompt } from "../util/resume_prompt.js";
+import { coverLetterPrompt } from "../util/coverLetter_Prompt.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ if (!process.env.OPENROUTER_API_KEY) {
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey:
-    "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",
+    "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",
 });
 
 export const generateResume = async (req, res) => {
@@ -62,7 +63,21 @@ export const generateCoverLetter = async (req, res) => {
         {
           role: "system",
           content:
-            "You are an expert career assistant that generates cover letters based on job descriptions and user details. Respond with JSON containing 'coverLetterText'.",
+            `You are an expert career assistant that generates cover letters based on job descriptions and user details. Respond with JSON of this structure {
+  "applicantName": "",
+  "applicantEmail": "",
+  "applicantPhone": "",
+  "applicantLocation": "",
+  "date": "",
+  "recipientName": "",
+  "companyName": "",
+  "greeting": "",
+  "openingParagraph": "",
+  "bodyParagraph1": "",
+  "bodyParagraph2": "",
+  "bodyParagraph3": "",
+  "closingParagraph": "",
+}'.`,
         },
         {
           role: "user",
@@ -96,7 +111,32 @@ export const generateInterviewNotes = async (req, res) => {
         {
           role: "system",
           content:
-            "You are an expert career assistant that generates interview notes based on job descriptions and user details. Respond with JSON containing 'interviewNotes'.",
+            `You are an expert career assistant that generates interview notes based on job descriptions and user details. Respond with JSON of this structure {
+  "position": [
+    ""
+  ],
+  "company": [
+    ""
+  ],
+  "aboutCompany": [
+    ""
+  ],
+  "requiredYearsOfExperience": [
+    ""
+  ],
+  "salary": [
+    ""
+  ],
+  "requiredTechnicalSkills": [
+    ""
+  ],
+  "thingsToLearnPriorToInterview": [
+    ""
+  ],
+  "questionsToAskDuringInterview": [
+    ""
+  ]
+}`,
         },
         {
           role: "user",

@@ -27,11 +27,9 @@ const aboutUserSchema = new mongoose.Schema(
           type: String,
           trim: true,
         },
-        location: {
-          city: String,
-          state: String,
-          country: String,
-          zipCode: String,
+        address: {
+          type: String,
+          trim: true,
         },
         linkedinUrl: {
           type: String,

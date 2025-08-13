@@ -6,6 +6,9 @@ import Stage3 from "./stage3";
 import { useUser } from "@/context/UserContext";
 import { get_user_details, generate_resume, generate_cover_letter, generate_interview_notes } from "@/api";
 import { generateResumeHTML } from "@/components/templates/resume";
+import { generateCoverLetterHTML } from "@/components/templates/coverLetter";
+import { generateInterviewNotesHTML } from "@/components/templates/interviewNotes";
+
 
 export default function Content({ setCurrentPage }) {
   const { user } = useUser();
@@ -15,6 +18,9 @@ export default function Content({ setCurrentPage }) {
     stage2: null,
   });
   const [userDetails, setUserDetails] = useState({});
+  const [resumeGenerated, setResumeGenerated] = useState(false);
+  const [coverLetterGenerated, setCoverLetterGenerated] = useState(false);
+  const [interviewNotesGenerated, setInterviewNotesGenerated] = useState(false);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -44,7 +50,6 @@ export default function Content({ setCurrentPage }) {
         const nextPage = Math.min(currentPage + 1, 2); // Max 3 pages (0, 1, 2)
         const nextScrollTop = nextPage * containerHeight;
 
-        console.log('Scrolling from page', currentPage, 'to page', nextPage);
 
         container.scrollTo({
           top: nextScrollTop,
@@ -82,32 +87,26 @@ export default function Content({ setCurrentPage }) {
     try {
       setFormData((prev) => ({ ...prev, stage2: data }));
 
-      // Print all collected data after stage2 is submitted
-      console.log("=== ALL COLLECTED DATA ===");
-      console.log("User Details:", userDetails);
-      console.log("Stage 1 Data:", formData.stage1);
-      console.log("Stage 2 Data:", data);
-      console.log("Complete Form Data:", { ...formData, stage2: data });
 
       // Call generate APIs if we have the required data
       if (formData.stage1?.jobDescription && userDetails) {
+        // Clear all files in the files folder
+        try {
+          await fetch('/api/clear-files', {
+            method: 'POST'
+          });
+        } catch (error) {
+          console.error("Error clearing files:", error);
+        }
         const jobDescription = formData.stage1.jobDescription;
         const userDetailsString = JSON.stringify(userDetails);
         const companyName = formData.stage1.companyName || "Unknown Company";
 
-        console.log("Calling generate APIs...");
-
-        // Generate Resume
-        console.log("Calling generate_resume API...");
         const resumeResult = await generate_resume(
           jobDescription,
           userDetailsString
         );
-        console.log("=== GENERATED RESUME ===");
         const htmlContent = generateResumeHTML(resumeResult);
-        console.log(htmlContent);
-        
-        // Save to resume.txt file
         try {
           const response = await fetch('/api/save-resume', {
             method: 'POST',
@@ -121,34 +120,66 @@ export default function Content({ setCurrentPage }) {
           
           if (response.ok) {
             console.log("Resume HTML saved to resume.txt");
+            setResumeGenerated(true);
           } else {
             console.error("Failed to save resume HTML");
           }
         } catch (error) {
           console.error("Error saving resume HTML:", error);
         }
-
-        
-
-        // Generate Cover Letter
-        console.log("Calling generate_cover_letter API...");
         const coverLetterResult = await generate_cover_letter(
           jobDescription,
           userDetailsString,
-          companyName
+          
         );
-        console.log("=== GENERATED COVER LETTER ===");
-        console.log(coverLetterResult);
-
-        // Generate Interview Notes
-        console.log("Calling generate_interview_notes API...");
+        const coverLetterHtmlContent = generateCoverLetterHTML(coverLetterResult);
+        try {
+          const response = await fetch('/api/save-coverLetter', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              htmlContent: coverLetterHtmlContent
+            })
+          });
+          
+          if (response.ok) {
+            console.log("Cover Letter HTML saved to coverLetter.txt");
+            setCoverLetterGenerated(true);
+          } else {
+            console.error("Failed to save cover Letter HTML");
+          }
+        } catch (error) {
+          console.error("Error saving resume HTML:", error);
+        }
         const interviewNotesResult = await generate_interview_notes(
           jobDescription,
-          userDetailsString,
-          companyName
+          userDetailsString
         );
-        console.log("=== GENERATED INTERVIEW NOTES ===");
-        console.log(interviewNotesResult);
+        const interviewNotesHtmlContent = generateInterviewNotesHTML(interviewNotesResult);
+        try {
+          const response = await fetch('/api/save-InterviewNotes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              htmlContent: interviewNotesHtmlContent
+            })
+          });
+          
+          if (response.ok) {
+            console.log("Interview Notes HTML saved to interviewNotes.txt");
+            setInterviewNotesGenerated(true);
+          } else {
+            console.error("Failed to save interview Notes HTML" , response);
+          }
+        } catch (error) {
+          console.error("Error saving interview Notes HTML:", error);
+        }
+
+        
       } else {
         console.log("Missing required data for document generation");
       }
@@ -174,7 +205,7 @@ export default function Content({ setCurrentPage }) {
 
       {/* Page 3 */}
       <div className="w-full h-full flex items-center justify-center snap-start">
-        <Stage3 />
+        <Stage3 resumeGenerated={resumeGenerated} coverLetterGenerated={coverLetterGenerated} interviewNotesGenerated={interviewNotesGenerated} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { routes } from "@/constants/routes";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Menubar,
   MenubarContent,
@@ -11,18 +11,38 @@ import {
 } from "@/components/ui/menubar";
 import { useUser } from "@/context/UserContext";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "antd";
 import { Menu } from "lucide-react";
 export default function CustomHeader() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useUser();
+  const [activeKey, setActiveKey] = useState("home");
 
   useEffect(() => {
     console.log(user);
   }, [user]);
+
+  useEffect(() => {
+    if (pathname === routes.home) {
+      setActiveKey("home");
+    } else if (pathname === routes.dashboard) {
+      setActiveKey("dashboard");
+    } else if (pathname === routes.details) {
+      setActiveKey("details");
+    }
+  }, [pathname]);
+
+  const handleTabChange = (key: string) => {
+    setActiveKey(key);
+    if (key === "home") router.push(routes.home);
+    if (key === "dashboard") router.push(routes.dashboard);
+    if (key === "details") router.push(routes.details);
+  };
+
   return (
     <>
       <style>
@@ -61,12 +81,8 @@ export default function CustomHeader() {
           >
             {/* Desktop Navigation */}
             <Tabs
-              defaultActiveKey="home"
-              onChange={(key) => {
-                if (key === "home") router.push(routes.home);
-                if (key === "dashboard") router.push(routes.dashboard);
-                if (key === "details") router.push(routes.details);
-              }}
+              activeKey={activeKey}
+              onChange={handleTabChange}
               items={[
                 {
                   key: "home",

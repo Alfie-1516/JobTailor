@@ -84,9 +84,9 @@ const PersonalInformationForm = [
   "email",
   "phone",
   "address",
-  "linkedin",
-  "github",
-  "portfolio",
+  "linkedinUrl",
+  "githubUrl",
+  "portfolioUrl",
 ];
 
 const EducationForm = [

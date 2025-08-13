@@ -9,7 +9,12 @@ export async function POST(request: NextRequest) {
     const { htmlContent } = body;
 
     // Save HTML file
-    const htmlFilePath = join(process.cwd(), "public", "files", "resume.html");
+    const htmlFilePath = join(
+      process.cwd(),
+      "public",
+      "files",
+      "coverLetter.html"
+    );
     await writeFile(htmlFilePath, htmlContent, "utf8");
 
     // Convert to PDF using Puppeteer
@@ -21,7 +26,7 @@ export async function POST(request: NextRequest) {
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
 
-    const pdfPath = join(process.cwd(), "public", "files", "resume.pdf");
+    const pdfPath = join(process.cwd(), "public", "files", "coverLetter.pdf");
     await page.pdf({
       path: pdfPath,
       format: "A4",
@@ -33,13 +38,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Resume PDF saved successfully",
-      filePath: "/files/resume.pdf",
+      message: "Cover letter PDF saved successfully",
+      filePath: "/files/coverLetter.pdf",
     });
   } catch (error) {
-    console.error("Error saving resume PDF:", error);
+    console.error("Error saving cover letter PDF:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to save resume PDF" },
+      { success: false, message: "Failed to save cover letter PDF" },
       { status: 500 }
     );
   }
