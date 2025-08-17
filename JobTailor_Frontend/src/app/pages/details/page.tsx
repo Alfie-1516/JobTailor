@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Card from "@/components/cards/card";
 import { get_user_details } from "@/api";
 import { useUser } from "@/context/UserContext";
-import { Empty } from 'antd';
+import { Empty } from "antd";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
@@ -14,26 +14,29 @@ export default function Details() {
   const { user } = useUser();
   const [userDetails, setUserDetails] = useState<any>({});
 
-  useEffect(() => {
+  const fetchUserDetails = async () => {
     if (!user?._id) return;
 
-    const fetchUserDetails = async () => {
-      try {
-        const details = await get_user_details(user._id);
-        if (details.success) {
-          setUserDetails(details.data);
-          console.log(details.data);
-        } else {
-          // No user details found - this is normal for new users
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
+    try {
+      const details = await get_user_details(user._id);
+      if (details.success) {
+        setUserDetails(details.data);
+        console.log(details.data);
+      } else {
+        // No user details found - this is normal for new users
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserDetails();
-    
   }, [user?._id]);
+
+  const refreshUserDetails = () => {
+    fetchUserDetails();
+  };
 
   return (
     <div className="h-full w-1/2 ">
@@ -41,10 +44,16 @@ export default function Details() {
         {!user?._id && (
           <div className="flex flex-col gap-4 justify-center items-center">
             <Empty description="No user details found" />
-            <Button className="w-[10rem]" variant={"default"} onClick={() => router.push(routes.login)}>Login</Button>
+            <Button
+              className="w-[10rem]"
+              variant={"default"}
+              onClick={() => router.push(routes.login)}
+            >
+              Login
+            </Button>
           </div>
         )}
-     
+
         {Object.keys(userDetails || {}).map((key) => {
           if (
             [
@@ -70,6 +79,7 @@ export default function Details() {
               information={userDetails[key] || []}
               title={displayName}
               baseName={key}
+              onDataChange={refreshUserDetails}
             />
           );
         })}

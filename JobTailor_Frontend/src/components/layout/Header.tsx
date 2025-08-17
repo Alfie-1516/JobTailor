@@ -19,7 +19,7 @@ import { Menu } from "lucide-react";
 export default function CustomHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [activeKey, setActiveKey] = useState("home");
 
   useEffect(() => {
@@ -41,6 +41,18 @@ export default function CustomHeader() {
     if (key === "home") router.push(routes.home);
     if (key === "dashboard") router.push(routes.dashboard);
     if (key === "details") router.push(routes.details);
+  };
+
+  const handleLogout = async () => {
+    try {
+      setUser(null);
+      router.push(routes.home);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still clear user state even if API call fails
+      setUser(null);
+      router.push(routes.login);
+    }
   };
 
   return (
@@ -131,7 +143,7 @@ export default function CustomHeader() {
             {user?._id ? (
               <Button
                 className="bg-green-500 text-white rounded-full"
-                onClick={() => router.push(routes.login)}
+                onClick={handleLogout}
               >
                 Logout
               </Button>

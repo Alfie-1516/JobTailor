@@ -20,9 +20,6 @@ export default function Stage3({
   coverLetterGenerated: boolean;
   interviewNotesGenerated: boolean;
 }) {
-  const [resumeProgress, setResumeProgress] = useState(0);
-  const [coverLetterProgress, setCoverLetterProgress] = useState(0);
-  const [interviewNotesProgress, setInterviewNotesProgress] = useState(0);
   const [isGenerating, setIsGenerating] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -33,29 +30,6 @@ export default function Stage3({
       setIsComplete(true);
     }
   }, [resumeGenerated, coverLetterGenerated, interviewNotesGenerated]);
-
-  // Simulate progress while waiting for files
-  useEffect(() => {
-    if (!isGenerating) return;
-    const interval = setInterval(() => {
-      setResumeProgress((prev) => {
-        if (prev < 100) return Math.min(prev + Math.random() * 15, 100);
-        setCoverLetterProgress((cvPrev) => {
-          if (cvPrev < 100) return Math.min(cvPrev + Math.random() * 15, 100);
-          setInterviewNotesProgress((inPrev) => {
-            if (inPrev < 100) return Math.min(inPrev + Math.random() * 20, 100);
-            setIsGenerating(false);
-            setIsComplete(true);
-            clearInterval(interval);
-            return 100;
-          });
-          return 100;
-        });
-        return 100;
-      });
-    }, 600);
-    return () => clearInterval(interval);
-  }, [isGenerating]);
 
   const downloadAllFiles = async () => {
     const files = [
@@ -83,15 +57,18 @@ export default function Stage3({
   };
 
   const getOverallProgress = () => {
-    return Math.round(
-      (resumeProgress + coverLetterProgress + interviewNotesProgress) / 3
-    );
+    const completed = [
+      resumeGenerated,
+      coverLetterGenerated,
+      interviewNotesGenerated,
+    ].filter(Boolean).length;
+    return Math.round((completed / 3) * 100);
   };
 
   const getGenerationStatus = () => {
-    if (resumeProgress < 100) return "Generating Resume...";
-    if (coverLetterProgress < 100) return "Generating Cover Letter...";
-    if (interviewNotesProgress < 100) return "Generating Interview Notes...";
+    if (!resumeGenerated) return "Generating Resume...";
+    if (!coverLetterGenerated) return "Generating Cover Letter...";
+    if (!interviewNotesGenerated) return "Generating Interview Notes...";
     return "All documents ready!";
   };
 
@@ -149,11 +126,11 @@ export default function Stage3({
           <LoadingCard
             icon={<FileTextIcon className="w-5 h-5 text-blue-500" />}
             cardName="Resume"
-            progress={resumeProgress}
-            isComplete={resumeProgress >= 100}
+            progress={resumeGenerated ? 100 : 0}
+            isComplete={resumeGenerated}
             strokeColor="#3b82f6"
             statusText={
-              resumeProgress < 100
+              !resumeGenerated
                 ? "Optimizing for ATS and tailoring content..."
                 : "Ready for download"
             }
@@ -162,11 +139,11 @@ export default function Stage3({
           <LoadingCard
             icon={<MessageSquareIcon className="w-5 h-5 text-purple-500" />}
             cardName="Cover Letter"
-            progress={coverLetterProgress}
-            isComplete={coverLetterProgress >= 100}
+            progress={coverLetterGenerated ? 100 : 0}
+            isComplete={coverLetterGenerated}
             strokeColor="#8b5cf6"
             statusText={
-              coverLetterProgress < 100
+              !coverLetterGenerated
                 ? "Crafting personalized introduction..."
                 : "Ready for download"
             }
@@ -175,11 +152,11 @@ export default function Stage3({
           <LoadingCard
             icon={<LightbulbIcon className="w-5 h-5 text-orange-500" />}
             cardName="Interview Notes"
-            progress={interviewNotesProgress}
-            isComplete={interviewNotesProgress >= 100}
+            progress={interviewNotesGenerated ? 100 : 0}
+            isComplete={interviewNotesGenerated}
             strokeColor="#f97316"
             statusText={
-              interviewNotesProgress < 100
+              !interviewNotesGenerated
                 ? "Preparing questions and key talking points..."
                 : "Ready for download"
             }

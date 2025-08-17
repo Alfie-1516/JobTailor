@@ -122,5 +122,3 @@ export async function generate_interview_notes(
     body: JSON.stringify({ jobDescription, userDetails, companyName }),
   });
 }
-
-

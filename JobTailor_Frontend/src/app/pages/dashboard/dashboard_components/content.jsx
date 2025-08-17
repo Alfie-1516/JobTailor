@@ -22,22 +22,26 @@ export default function Content({ setCurrentPage }) {
   const [coverLetterGenerated, setCoverLetterGenerated] = useState(false);
   const [interviewNotesGenerated, setInterviewNotesGenerated] = useState(false);
 
-  useEffect(() => {
+  const fetchUserDetails = async () => {
     if (!user?._id) return;
-
-    const fetchUserDetails = async () => {
-      try {
-        const details = await get_user_details(user._id);
-        if (details.success) {
-          setUserDetails(details.data);
-        } else {
-          // No user details found - this is normal for new users
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
+    
+    try {
+      const details = await get_user_details(user._id);
+      if (details.success) {
+        setUserDetails(details.data);
+      } else {
+        // No user details found - this is normal for new users
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
 
+  const refreshUserDetails = () => {
+    fetchUserDetails();
+  };
+
+  useEffect(() => {
     fetchUserDetails();
   }, [user?._id]);
 
@@ -98,9 +102,10 @@ export default function Content({ setCurrentPage }) {
         } catch (error) {
           console.error("Error clearing files:", error);
         }
-        const jobDescription = formData.stage1.jobDescription;
-        const userDetailsString = JSON.stringify(userDetails);
         const companyName = formData.stage1.companyName || "Unknown Company";
+        const jobDescription = formData.stage1.jobDescription + " at " + companyName;
+        const userDetailsString = JSON.stringify(userDetails);
+        
 
         const resumeResult = await generate_resume(
           jobDescription,
