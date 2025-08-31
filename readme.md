@@ -125,7 +125,7 @@ NODE_ENV=development
 
 **Get your OpenAI API Key:**
 
-1. Visit [OpenAI Platform](https://platform.openai.com/)
+1. Visit [Open Router Platform](https://openrouter.ai/deepseek/deepseek-r1-0528:free/api)
 2. Sign up or log in to your account
 3. Navigate to API Keys section
 4. Create a new API key
@@ -291,11 +291,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
----
-
-## 📄 License
-
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -313,7 +308,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 If you have any questions or need help:
 
 - **Email**: your.email@example.com
-- **GitHub Issues**: [Create an issue](https://github.com/yourusername/JobTailor/issues)
+- **GitHub Issues**: [Create an issue](https://github.com/Alfie-1516/JobTailor/issues)
 - **Documentation**: Check this README and code comments
 
 ---
