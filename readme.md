@@ -113,7 +113,10 @@ MONGO_URI=mongodb://localhost:27017/JobTailor
 # or for cloud: mongodb+srv://username:password@cluster.mongodb.net/JobTailor
 
 # OpenAI API Configuration
-OPENAI_API_KEY=your_openai_api_key_here
+In directory JobTailor_Backend/Controller/ServerController add in your api key as follows
+ apiKey:
+    "your_openai_api_key_here",
+});
 
 # Server Configuration
 PORT=5001
@@ -146,8 +149,6 @@ cp .env.example .env.local
 # Backend API URL
 NEXT_PUBLIC_API_BASE=http://localhost:5001/api
 
-# OpenAI Configuration (if needed on frontend)
-NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### 4. Start the Application
