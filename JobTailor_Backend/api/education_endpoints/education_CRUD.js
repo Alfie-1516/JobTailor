@@ -16,3 +16,62 @@ export async function addEducation(education, user) {
     education: data,
   };
 }
+
+export async function getEducation(user) {
+  const userId = await getUserIdFromAuthId(user.id);
+  const { data, error } = await supabase
+    .from("tbl_education")
+    .select("*")
+    .eq("user_id", userId);
+
+
+    if (error) {
+      throw new Error(`Failed to get education: ${error.message}`);
+    }
+
+    return {
+      message: "Education fetched successfully",
+      education: data,
+    };
+}
+
+export async function updateEducation(education, user) {
+  const userId = await getUserIdFromAuthId(user.id);
+  const { data, error } = await supabase
+    .from("tbl_education")
+    .update(education)
+    .eq("user_id", userId)
+    .eq("id", education.id)
+    .select()
+    .single();
+
+    if (error) {
+      throw new Error(`Failed to update education: ${error.message}`);
+    }
+
+    return {
+      message: "Education updated successfully",
+      education: data,
+    };
+}
+
+export async function deleteEducation(education, user) {
+  const userId = await getUserIdFromAuthId(user.id);
+  const { data, error } = await supabase
+    .from("tbl_education")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", education.id)
+    .select()
+    .single();
+
+    if (error) {
+      throw new Error(`Failed to delete education: ${error.message}`);
+    }
+
+    return {
+      message: "Education deleted successfully",
+      education: data,
+    };
+}
+
