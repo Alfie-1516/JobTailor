@@ -1,9 +1,20 @@
 import express from "express";
-import { 
-    getUserDetailsHandler,
-    updateUserDetailsHandler } from "../controllers/serverController.js";
-import { addWorkExperienceHandler, updateWorkExperienceHandler, getWorkExperienceHandler, deleteWorkExperienceHandler } from "../controllers/workExperienceController.js";
-import { addWorkExperienceDescriptionHandler, updateWorkExperienceDescriptionHandler, deleteWorkExperienceDescriptionHandler } from "../controllers/workExperienceController.js";
+import {
+  getUserDetailsHandler,
+  updateUserDetailsHandler,
+} from "../controllers/serverController.js";
+import {
+  addWorkExperienceHandler,
+  updateWorkExperienceHandler,
+  getWorkExperienceHandler,
+  deleteWorkExperienceHandler,
+} from "../controllers/workExperienceController.js";
+import {
+  addWorkExperienceDescriptionHandler,
+  updateWorkExperienceDescriptionHandler,
+  deleteWorkExperienceDescriptionHandler,
+} from "../controllers/workExperienceController.js";
+import { addEducationHandler } from "../controllers/educationController.js";
 
 const router = express.Router();
 
@@ -19,6 +30,15 @@ router.delete("/workExperience", deleteWorkExperienceHandler);
 
 // Work experience description routes
 router.post("/workExperience/description", addWorkExperienceDescriptionHandler);
-router.put("/workExperience/description", updateWorkExperienceDescriptionHandler);
-router.delete("/workExperience/description", deleteWorkExperienceDescriptionHandler);
+router.put(
+  "/workExperience/description",
+  updateWorkExperienceDescriptionHandler,
+);
+router.delete(
+  "/workExperience/description",
+  deleteWorkExperienceDescriptionHandler,
+);
+
+// Education routes
+router.post("/education", addEducationHandler);
 export default router;
