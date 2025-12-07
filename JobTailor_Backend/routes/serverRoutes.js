@@ -14,13 +14,51 @@ import {
   updateWorkExperienceDescriptionHandler,
   deleteWorkExperienceDescriptionHandler,
 } from "../controllers/workExperienceController.js";
-import { addEducationHandler, updateEducationHandler, deleteEducationHandler, getEducationHandler } from "../controllers/educationController.js";
-import { addSkillHandler, getSkillsHandler, updateSkillHandler, deleteSkillHandler } from "../controllers/skillController.js";
-import { addCertificationHandler, getCertificationsHandler, updateCertificationHandler, deleteCertificationHandler } from "../controllers/certificationController.js";
-import { addAchivementHandler, getAchivementsHandler, updateAchivementHandler, deleteAchivementHandler } from "../controllers/achivementController.js";
-import { addProjectHandler, getProjectsHandler, updateProjectHandler, deleteProjectHandler, addProjectDescriptionHandler, updateProjectDescriptionHandler, deleteProjectDescriptionHandler   } from "../controllers/projectController.js";
-import { addVolunteerExperienceHandler, getVolunteerExperienceHandler, updateVolunteerExperienceHandler, deleteVolunteerExperienceHandler } from "../controllers/volunteerExperiencController.js";
-import { addVolunteerExperienceDescriptionHandler, updateVolunteerExperienceDescriptionHandler, deleteVolunteerExperienceDescriptionHandler } from "../controllers/volunteerExperiencController.js";
+import {
+  addEducationHandler,
+  updateEducationHandler,
+  deleteEducationHandler,
+  getEducationHandler,
+} from "../controllers/educationController.js";
+import {
+  addSkillHandler,
+  getSkillsHandler,
+  updateSkillHandler,
+  deleteSkillHandler,
+} from "../controllers/skillController.js";
+import {
+  addCertificationHandler,
+  getCertificationsHandler,
+  updateCertificationHandler,
+  deleteCertificationHandler,
+} from "../controllers/certificationController.js";
+import {
+  addAchivementHandler,
+  getAchivementsHandler,
+  updateAchivementHandler,
+  deleteAchivementHandler,
+} from "../controllers/achivementController.js";
+import {
+  addProjectHandler,
+  getProjectsHandler,
+  updateProjectHandler,
+  deleteProjectHandler,
+  addProjectDescriptionHandler,
+  updateProjectDescriptionHandler,
+  deleteProjectDescriptionHandler,
+} from "../controllers/projectController.js";
+import {
+  addVolunteerExperienceHandler,
+  getVolunteerExperienceHandler,
+  updateVolunteerExperienceHandler,
+  deleteVolunteerExperienceHandler,
+} from "../controllers/volunteerExperiencController.js";
+import {
+  addVolunteerExperienceDescriptionHandler,
+  updateVolunteerExperienceDescriptionHandler,
+  deleteVolunteerExperienceDescriptionHandler,
+} from "../controllers/volunteerExperiencController.js";
+import { summarizeJobHandler } from "../controllers/AIController.js";
 const router = express.Router();
 
 // User routes
@@ -35,8 +73,14 @@ router.delete("/workExperience", deleteWorkExperienceHandler);
 
 // Work experience description routes
 router.post("/workExperience/description", addWorkExperienceDescriptionHandler);
-router.put("/workExperience/description", updateWorkExperienceDescriptionHandler);
-router.delete("/workExperience/description", deleteWorkExperienceDescriptionHandler);
+router.put(
+  "/workExperience/description",
+  updateWorkExperienceDescriptionHandler,
+);
+router.delete(
+  "/workExperience/description",
+  deleteWorkExperienceDescriptionHandler,
+);
 
 // Education routes
 router.post("/education", addEducationHandler);
@@ -80,7 +124,19 @@ router.put("/volunteerExperience", updateVolunteerExperienceHandler);
 router.delete("/volunteerExperience", deleteVolunteerExperienceHandler);
 
 // Volunteer experience description routes
-router.post("/volunteerExperience/description", addVolunteerExperienceDescriptionHandler);
-router.put("/volunteerExperience/description", updateVolunteerExperienceDescriptionHandler);
-router.delete("/volunteerExperience/description", deleteVolunteerExperienceDescriptionHandler);
+router.post(
+  "/volunteerExperience/description",
+  addVolunteerExperienceDescriptionHandler,
+);
+router.put(
+  "/volunteerExperience/description",
+  updateVolunteerExperienceDescriptionHandler,
+);
+router.delete(
+  "/volunteerExperience/description",
+  deleteVolunteerExperienceDescriptionHandler,
+);
+
+//Ai routes
+router.post("/ai/summarizeJob", summarizeJobHandler);
 export default router;
