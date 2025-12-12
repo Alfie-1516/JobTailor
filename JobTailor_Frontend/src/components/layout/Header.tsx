@@ -2,29 +2,29 @@
 
 import { routes } from "@/constants/routes";
 import React, { useEffect, useState } from "react";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
-import { useUser } from "@/context/UserContext";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 
 import { useRouter, usePathname } from "next/navigation";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "antd";
 import { Menu } from "lucide-react";
+import { getUser } from "@/api/user";
+import { User } from "@supabase/supabase-js";
 export default function CustomHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, setUser } = useUser();
   const [activeKey, setActiveKey] = useState("home");
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    const fetchUser = async () => {
+      const user = await getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
 
   useEffect(() => {
     if (pathname === routes.home) {
@@ -43,17 +43,7 @@ export default function CustomHeader() {
     if (key === "details") router.push(routes.details);
   };
 
-  const handleLogout = async () => {
-    try {
-      setUser(null);
-      router.push(routes.home);
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Still clear user state even if API call fails
-      setUser(null);
-      router.push(routes.login);
-    }
-  };
+
 
   return (
     <>
@@ -77,20 +67,11 @@ export default function CustomHeader() {
                 `}
       </style>
       <div className="flex  w-full h-16 mr-20">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="flex justify-between w-full items-center"
-        >
-          <ResizablePanel
-            defaultSize={25}
-            className="flex justify-start items-center text-green-500 font-bold text-xl"
-          >
+        <ResizablePanelGroup direction="horizontal" className="flex justify-between w-full items-center">
+          <ResizablePanel defaultSize={25} className="flex justify-start items-center text-green-500 font-bold text-xl">
             Job Tailor
           </ResizablePanel>
-          <ResizablePanel
-            defaultSize={50}
-            className="justify-center items-center w-[20px]  md:flex"
-          >
+          <ResizablePanel defaultSize={50} className="justify-center items-center w-[20px]  md:flex">
             {/* Desktop Navigation */}
             <Tabs
               activeKey={activeKey}
@@ -111,10 +92,7 @@ export default function CustomHeader() {
               ]}
             />
           </ResizablePanel>
-          <ResizablePanel
-            defaultSize={50}
-            className="flex justify-center items-center w-[20px] lg:hidden md:hidden"
-          >
+          <ResizablePanel defaultSize={50} className="flex justify-center items-center w-[20px] lg:hidden md:hidden">
             {/* Mobile Navigation */}
             <Menubar className="md:hidden border-none bg-transparent">
               <MenubarMenu>
@@ -122,39 +100,18 @@ export default function CustomHeader() {
                   <Menu className="h-5 w-5" />
                 </MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem onClick={() => router.push(routes.home)}>
-                    Home
-                  </MenubarItem>
-                  <MenubarItem onClick={() => router.push(routes.dashboard)}>
-                    Dashboard
-                  </MenubarItem>
-                  <MenubarItem onClick={() => router.push(routes.details)}>
-                    Details
-                  </MenubarItem>
+                  <MenubarItem onClick={() => router.push(routes.home)}>Home</MenubarItem>
+                  <MenubarItem onClick={() => router.push(routes.dashboard)}>Dashboard</MenubarItem>
+                  <MenubarItem onClick={() => router.push(routes.details)}>Details</MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
             </Menubar>
           </ResizablePanel>
 
-          <ResizablePanel
-            defaultSize={25}
-            className="flex justify-end items-center "
-          >
-            {user?._id ? (
-              <Button
-                className="bg-green-500 text-white rounded-full"
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            ) : (
-              <Button
-                className="bg-green-500 text-white rounded-full"
-                onClick={() => router.push(routes.login)}
-              >
-                Get Started
-              </Button>
-            )}
+          <ResizablePanel defaultSize={25} className="flex justify-end items-center ">
+            <Button className="bg-green-500 text-white rounded-full" >
+              Logout
+            </Button>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
