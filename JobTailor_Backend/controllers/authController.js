@@ -6,7 +6,6 @@ import { logout } from "../api/auth_endpoints/logout.js";
 export const loginHandler = async (req, res) => {
   const { email, password } = req.body;
 
-
   const user = await login(email, password);
 
   if (user.error) {
@@ -36,6 +35,6 @@ export const logoutHandler = async (req, res) => {
   if (result.error) {
     res.status(401).json({ error: result.error });
   } else {
-  res.status(200).json(result);
+    res.status(200).json(result);
   }
 };

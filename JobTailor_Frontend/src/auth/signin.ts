@@ -3,12 +3,16 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function signin(username: string, password: string) {
   try {
-    await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: username,
       password: password,
     });
 
+    if (error) {
+      throw new Error(error.message);
+    }
 
+    return data;
 
   } catch (error) {
     console.error("Error signing in:", error);

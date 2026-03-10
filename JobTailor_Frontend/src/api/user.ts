@@ -1,7 +1,7 @@
-import { makeRequest } from "./index";
+import { makeRequest } from ".";
 
-export async function getUser() {
-  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user`, {
-    method: "GET",
-  });
+export function getUserDetails() {
+    return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user`, {
+        method: "GET",
+    });
 }
