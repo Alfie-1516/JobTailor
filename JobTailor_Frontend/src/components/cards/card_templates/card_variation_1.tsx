@@ -2,7 +2,6 @@
 
 import type React from "react";
 import { useState } from "react";
-import type { SectionTemplateItem } from "@/components/templates/personalInformation";
 import { Pencil, Plus, User, Check, X } from "lucide-react";
 import { updatePersonalInformation } from "@/api/personalInformation";
 
@@ -11,11 +10,6 @@ const cardWrapperClass =
 const headerClass =
   "flex items-center justify-between border-b border-gray-200 px-8 pb-5 pt-7";
 const headerLeftClass = "flex items-center gap-[14px]";
-const iconWrapperClass =
-  "flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full [&>svg]:h-6 [&>svg]:w-6";
-const defaultIconClass = "bg-green-500 text-white";
-
-
 
 const TEMPLATE_API: Record<
   string,
@@ -25,18 +19,18 @@ const TEMPLATE_API: Record<
 };
 
 export type CardVariation1Props = {
-  item: Record<string, unknown>;
-  template: SectionTemplateItem[];
+  data: Record<string, string|number|boolean|null|undefined>;
+  template: { key: string; label: string }[];
   templateName: string;
   onEdit?: () => void;
   onSave?: (updatedItem: Record<string, unknown>) => void;
   title: string;
   subtitle: string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
 };
 
 export default function CardVariation1({
-  item,
+  data,
   template,
   templateName,
   onEdit,
@@ -45,20 +39,26 @@ export default function CardVariation1({
   subtitle,
   icon,
 }: CardVariation1Props) {
+  const record: Record<string, string|number|boolean|null|undefined> = Array.isArray(data)
+    ? (data[0] ?? {})
+    : data;
+
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Record<string, unknown>>(() => ({ ...item }));
+  const [formData, setFormData] = useState<Record<string, unknown>>(() => ({
+    ...record,
+  }));
 
   const filledRows = template.filter(
-    ({ key }) => item[key] != null && item[key] !== "",
+    ({ key }) => record[key] != null && record[key] !== "",
   );
   const emptyFields = template
-    .filter(({ key }) => item[key] == null || item[key] === "")
+    .filter(({ key }) => record[key] == null || record[key] === "")
     .map(({ key, label }) => ({ key, label }));
 
   const handleEditClick = () => {
-    setFormData({ ...item });
+    setFormData({ ...record });
     setFormError(null);
     setIsEditing(true);
     onEdit?.();
@@ -86,7 +86,7 @@ export default function CardVariation1({
   };
 
   const handleCancel = () => {
-    setFormData({ ...item });
+    setFormData({ ...record });
     setIsEditing(false);
   };
 
@@ -178,9 +178,9 @@ export default function CardVariation1({
               {label}
             </span>
             <span
-              className={`text-[0.97rem] font-normal tracking-tight ${key === "email" ? "font-medium text-gray-600" : "text-gray-900"}`}
+              className={`text-[0.97rem] font-normal tracking-tight text-gray-900`}
             >
-              {String(item[key])}
+              {String(record[key])}
             </span>
           </div>
         ))}
@@ -208,36 +208,32 @@ export default function CardVariation1({
 }
 
 function CardHeader({
-    title,
-    subtitle,
-    icon,
-    actions,
-  }: {
-    title: string;
-    subtitle: string;
-    icon?: React.ReactNode;
-    actions: React.ReactNode;
-  }) {
-    return (
-      <div className={headerClass}>
-        <div className={headerLeftClass}>
-          {icon != null ? (
-            <div className={`${iconWrapperClass} text-gray-900`}>{icon}</div>
-          ) : (
-            <div className={`${iconWrapperClass} ${defaultIconClass}`}>
-              <User className="h-6 w-6" stroke="currentColor" />
-            </div>
-          )}
-          <div>
-            <h2 className="text-[1.1rem] font-medium tracking-tight text-gray-900">
-              {title}
-            </h2>
-            <p className="mt-0.5 text-[0.75rem] font-light uppercase tracking-wider text-gray-500">
-              {subtitle}
-            </p>
-          </div>
+  title,
+  subtitle,
+  icon,
+  actions,
+}: {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  actions: React.ReactNode;
+}) {
+  return (
+    <div className={headerClass}>
+      <div className={headerLeftClass}>
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full h-6 w-6 bg-green-500 text-white">
+          {icon}
         </div>
-        {actions}
+        <div>
+          <h2 className="text-[1.1rem] font-medium tracking-tight text-gray-900">
+            {title}
+          </h2>
+          <p className="mt-0.5 text-[0.75rem] font-light uppercase tracking-wider text-gray-500">
+            {subtitle}
+          </p>
+        </div>
       </div>
-    );
-  }
+      {actions}
+    </div>
+  );
+}

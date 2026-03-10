@@ -1,57 +1,67 @@
 "use client";
 import type React from "react";
-import {
-  sectionTemplates,
-  type SectionTemplateItem,
-} from "@/components/templates/personalInformation";
 import CardVariation1 from "./card_templates/card_variation_1";
-import { Button } from "../ui/button";
+import CardVariation2 from "./card_templates/card_variation_2";
+import {
+  personalInformation,
+  workExperience,
+} from "@/components/templates/formTemplates";
+
+export type CardProps = {
+  /** Single record (e.g. user details) or list (e.g. work experience) */
+  data: Record<string, string|number|boolean|null|undefined>;
+  title: string;
+  subtitle: string;
+  baseName: string;
+  icon: React.ReactNode;
+  onSaveSuccess?: () => void;
+};
 
 export default function Card({
-  userId,
-  information,
+  data,
   title,
   subtitle,
   baseName,
-  canAddFields,
   icon,
   onSaveSuccess,
-}: {
-  userId: string;
-  information: any[];
-  title: string;
-  baseName: string;
-  canAddFields: boolean;
-  subtitle: string;
-  icon?: React.ReactNode;
-  onSaveSuccess?: () => void;
-}) {
-  const template = sectionTemplates[baseName];
-  if (!template) return null;
-
+}: CardProps) {
+  const template = getTemplate(baseName);
   return (
     <div className="bg-white rounded-lg6 mb-4 ">
-      {canAddFields && <Button variant="outline">Add Field</Button>}
-      {information.map((item, index) =>
-        baseName === "personalInformation" ? (
-          <CardVariation1
-            key={index}
-            item={item}
-            template={template}
-            templateName={baseName}
-            title={title}
-            subtitle={subtitle}
-            icon={icon}
-            onSave={onSaveSuccess ? () => onSaveSuccess() : undefined}
-          />
-        ) : (
-            <p className="text-gray-500">No information available</p>
-        )
+      {baseName === "personalInformation" && (
+        <CardVariation1
+          data={data}
+          template={template}
+          templateName={baseName}
+          title={title}
+          subtitle={subtitle}
+          icon={icon}
+          onSave={onSaveSuccess ? () => onSaveSuccess() : undefined}
+        />
       )}
-
-      {information.length === 0 && <div>No information available</div>}
+      {baseName === "workExperience" && (
+        <CardVariation2
+          data={data}
+          template={template}
+          templateName={baseName}
+          title={title}
+          subtitle={subtitle}
+          icon={icon}
+          onSave={onSaveSuccess ? () => onSaveSuccess() : undefined}
+        />
+      )}
     </div>
   );
 }
 
 
+function getTemplate(baseName: string) {
+  switch (baseName) {
+    case "personalInformation":
+      return personalInformation;
+    case "workExperience":
+      return workExperience;
+    default:
+      return workExperience;
+  }
+}

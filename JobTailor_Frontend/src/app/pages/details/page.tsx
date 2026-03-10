@@ -2,16 +2,22 @@
 import React, { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Card from "@/components/cards/card";
-import { getUserDetails } from "@/api/user";
+import { getUserDetails, getWorkExperience } from "@/api/user";
+import {
+  mapWorkExperienceResponseToCardItems,
+  type WorkExperienceApiResponse,
+} from "@/mappers/workExperience";
 import { Empty } from "antd";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
 import isLoggedInCheck, { LoggedInUser } from "@/api/isLoggedIn";
+import { Briefcase, User } from "lucide-react";
 
 export default function Details() {
   const router = useRouter();
   const [userDetails, setUserDetails] = useState<any>({});
+  const [workExperienceList, setWorkExperienceList] = useState<any[]>([]);
   const [auth, setAuth] = useState<{
     isLoggedIn: boolean;
     user: LoggedInUser | null;
@@ -29,11 +35,21 @@ export default function Details() {
     }
   };
 
+  const fetchWorkExperience = async () => {
+    try {
+      const res = (await getWorkExperience()) as WorkExperienceApiResponse;
+      const items = mapWorkExperienceResponseToCardItems(res);
+      setWorkExperienceList(items);
+    } catch (error) {
+      console.error("Error fetching work experience:", error);
+    }
+  };
   useEffect(() => {
     isLoggedInCheck().then((result) => {
       setAuth(result);
       if (result.user) {
         fetchUserDetails();
+        fetchWorkExperience();
       }
     });
   }, []);
@@ -57,13 +73,20 @@ export default function Details() {
     <div className="h-full w-full">
       <ScrollArea className="rounded-lg border h-full p-4 ">
         <Card
-          userId={auth.user.id}
-          information={userDetails ? [userDetails] : []}
+          data={userDetails}
           title="Personal Information"
           subtitle="Basic Details"
           baseName="personalInformation"
-          canAddFields={false}
+          icon={<User />}
           onSaveSuccess={fetchUserDetails}
+        />
+        <Card
+          data={workExperienceList}
+          title="Work Experience"
+          subtitle="Work Experience"
+          baseName="workExperience"
+          onSaveSuccess={fetchWorkExperience}
+          icon={<Briefcase />}
         />
       </ScrollArea>
     </div>
