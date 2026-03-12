@@ -1,33 +1,27 @@
-/**
- * Work experience (and reusable) view/edit formatting.
- * View: entry lines + chip rows + body field; edit: field kind per template row.
- */
+
 
 import { formatScalar } from "@/util/dateformatter";
 
 export type ChipRow = { key: string; label: string; value: string };
 
-export type FormatWorkExperienceResult = {
+export type viewModeResponseFormat = {
   entryTitle: string;
   entrySubtitle: string;
   chipRows: ChipRow[];
   bodyField: { key: string; value: string }[];
 };
 
-function str(v: unknown): string {
-  if (v == null || v === "") return "";
-  return String(v).trim();
-}
+export type editModeResponseFormat = {
+  key: string;
+  label: string;
+  kind: "text" | "boolean" | "textarea";
+  value: unknown;
+};
 
-/**
- * Maps work experience API-shaped `data` to view parts:
- * - entryTitle / entrySubtitle from job_title / company
- * - chipRows for dates, current role, technologies (formatted via formatScalar)
- * - bodyField for description
- */
+//This function is used to format the data for the view mode of the work experience card
 export function formatWorkExperience(
   data: Record<string, unknown>,
-): FormatWorkExperienceResult {
+): viewModeResponseFormat {
   const chipDefs = [
     { key: "start_date", label: "Start Date" },
     { key: "end_date", label: "End Date" },
@@ -43,47 +37,21 @@ export function formatWorkExperience(
   }
 
   return {
-    entryTitle: str(data.job_title) || "—",
-    entrySubtitle: str(data.company),
+    entryTitle: String(data.job_title) || "—",
+    entrySubtitle: String(data.company),
     chipRows,
-    bodyField: [{ key: "description_1", value: str(data.description_1) }, { key: "description_2", value: str(data.description_2) }, { key: "description_3", value: str(data.description_3) }],
+    bodyField: [{ key: "description_1", value: String(data.description_1) }, { key: "description_2", value: String(data.description_2) }, { key: "description_3", value: String(data.description_3) }],
   };
 }
-export type WorkExperienceEditField = {
-  key: string;
-  label: string;
-  kind: "text" | "boolean" | "textarea";
-  value: unknown;
-};
 
-/**
- * Builds a single description string for edit/view when API returns
- * tbl_work_experience_descriptions: [{ description }, ...]
- */
-function joinWorkExperienceDescriptions(data: Record<string, unknown>): string {
-  const nested = data.tbl_work_experience_descriptions;
-  if (Array.isArray(nested) && nested.length > 0) {
-    const lines = nested
-      .map((row) => {
-        if (row && typeof row === "object" && "description" in row) {
-          return str((row as { description: unknown }).description);
-        }
-        return "";
-      })
-      .filter(Boolean);
-    if (lines.length > 0) return lines.join("\n");
-  }
-  return str(data.description);
-}
-/**
- * Edit fields for work experience form. Description is merged from
- * tbl_work_experience_descriptions when present, else data.description.
- */
+
+//This function is used to format the data for the edit mode of the work experience card
+//Majoroly to give each field its input type and value
 export function formatWorkExperienceEditFields(
   data: Record<string, unknown>,
-): WorkExperienceEditField[] {
+): editModeResponseFormat[] {
 
-  const fields: WorkExperienceEditField[] = [
+  const fields: editModeResponseFormat[] = [
     { key: "job_title", label: "Job Title", kind: "text", value: data.job_title },
     { key: "company", label: "Company", kind: "text", value: data.company },
     { key: "start_date", label: "Start Date", kind: "text", value: data.start_date },

@@ -2,46 +2,32 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Pencil, Trash2, Calendar, Plus, User, Check, X } from "lucide-react";
-import { updatePersonalInformation } from "@/api/personalInformation";
-import { updateWorkExperience, deleteWorkExperience } from "@/api/user";
-import {
-  formatWorkExperience,
-  formatWorkExperienceEditFields,
-} from "./formatter";
-import { WorkExperienceApiRow } from "@/mappers/workExperience";
-
-/* Match card_variation_1 layout and palette */
-const cardWrapperClass =
-  "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm";
-const headerClass =
-  "flex items-center justify-between border-b border-gray-200 px-8 pb-5 pt-7";
+import type { editModeResponseFormat, viewModeResponseFormat } from "./formatter";
+import { Pencil, Trash2, Calendar, Check, X } from "lucide-react";
+import { getFormatFunction, getEditFormatFunction } from "./functionMapper";
 
 export type CardVariation2Props = {
   apiResponse: { message: string; data: [] };
-  template: { key: string; label: string }[];
   templateName: string;
   title: string;
   subtitle: string;
   icon: React.ReactNode;
-  onEdit?: () => void;
-  onSave?: (updatedItem: Record<string, unknown>) => void;
-  onDelete?: () => void;
-  addButtonLabel?: string;
-  onAdd?: () => void;
 };
 
 export default function CardVariation2({
   apiResponse,
+  templateName,
   title,
   subtitle,
   icon,
-  template,
-  templateName,
 }: CardVariation2Props) {
   if (apiResponse.data.length === 0) {
     return (
-      <div className={`${cardWrapperClass} mb-4 p-6 text-center text-gray-500`}>
+      <div
+        className={
+          "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm mb-4 p-6 text-center text-gray-500"
+        }
+      >
         No information available
       </div>
     );
@@ -49,9 +35,16 @@ export default function CardVariation2({
 
   return (
     <div className="space-y-4">
-      <div className={cardWrapperClass}>
-        {/* Header — same structure as card_variation_1 CardHeader */}
-        <div className={headerClass}>
+      <div
+        className={
+          "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm"
+        }
+      >
+        <div
+          className={
+            "flex items-center justify-between border-b border-gray-200 px-8 pb-5 pt-7"
+          }
+        >
           <div className="flex items-center gap-[14px]">
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full h-6 w-6 bg-green-500 text-white">
               {icon}
@@ -69,12 +62,7 @@ export default function CardVariation2({
         </div>
 
         {apiResponse.data.map((item, index) => (
-          <CardEntries
-            key={index}
-            data={item}
-            template={template}
-            templateName={templateName}
-          />
+          <CardEntries key={index} data={item} templateName={templateName} />
         ))}
       </div>
     </div>
@@ -83,24 +71,26 @@ export default function CardVariation2({
 
 function CardEntries({
   data,
-  template,
   templateName,
 }: {
-  data: unknown;
-  template: { key: string; label: string }[];
+  data: Record<string, unknown>;
   templateName: string;
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const handleEditClick = () => {};
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
-  const handleSave = async () => {};
-
-  const handleCancel = () => {};
-
-  const handleChange = (key: string, value: unknown) => {};
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
 
   return (
-    <div className={cardWrapperClass}>
+    <div
+      className={
+        "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm"
+      }
+    >
       <div className="px-8 py-2 pb-7">
         <div
           className={
@@ -109,15 +99,14 @@ function CardEntries({
         >
           {!isEditing
             ? cardViewMode({
-                data: data as Record<string, unknown>,
+                data: data,
                 formatFunction: getFormatFunction(templateName),
                 handleEditClick,
               })
             : cardEditMode({
                 data: data,
+                formatFunction: getEditFormatFunction(templateName),
                 handleCancel,
-                handleSave,
-                handleChange,
               })}
         </div>
       </div>
@@ -132,12 +121,7 @@ function cardViewMode({
   onDelete,
 }: {
   data: Record<string, unknown>;
-  formatFunction: (data: Record<string, unknown>) => {
-    entryTitle: string;
-    entrySubtitle: string;
-    chipRows: { key: string; label: string; value: string }[];
-    bodyField: { key: string; value: string }[];
-  };
+  formatFunction: (data: Record<string, unknown>) => viewModeResponseFormat;
   handleEditClick: () => void;
   onDelete?: () => void;
 }) {
@@ -207,16 +191,24 @@ function cardViewMode({
 
 function cardEditMode({
   data,
+  formatFunction,
   handleCancel,
-  handleSave,
-  handleChange,
 }: {
-  data: WorkExperienceApiRow;
+  data: Record<string, unknown>;
+  formatFunction: (data: Record<string, unknown>) => editModeResponseFormat[];
   handleCancel: () => void;
-  handleSave: (e: React.FormEvent) => void;
-  handleChange: (key: string, value: unknown) => void;
 }) {
-  const fields = formatWorkExperienceEditFields(data);
+  const fields = formatFunction(data);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log(data);
+  };
+
+  const handleChange = (key: string, value: unknown) => {
+    console.log(key, value);
+  };
+
   return (
     <form onSubmit={handleSave} className="p-5">
       <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -289,24 +281,4 @@ function cardEditMode({
       </div>
     </form>
   );
-}
-
-function getFormatFunction(
-  templateName: string,
-): (data: Record<string, unknown>) => {
-  entryTitle: string;
-  entrySubtitle: string;
-  chipRows: { key: string; label: string; value: string }[];
-  bodyField: { key: string; value: string }[];
-} {
-  if (templateName === "workExperience") {
-    return formatWorkExperience;
-  } else {
-    return () => ({
-      entryTitle: "",
-      entrySubtitle: "",
-      chipRows: [],
-      bodyField: [],
-    });
-  }
 }
