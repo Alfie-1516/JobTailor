@@ -23,8 +23,9 @@ export async function getWorkExperience(user) {
     const userId = await getUserIdFromAuthId(user.id);
     const { data, error } = await supabase
       .from("tbl_work_experience")
-      .select(`*, tbl_work_experience_descriptions(*)`)
-      .eq("user_id", userId);
+      .select('*')
+      .eq("user_id", userId)
+      .order('created_at', { ascending: true });
 
     if (error) {
       throw new Error(`Failed to get work experience: ${error.message}`);
@@ -32,7 +33,7 @@ export async function getWorkExperience(user) {
 
     return {
       message: "Work experience fetched successfully",
-      workExperience: data,
+      data: data,
     };
 }
 

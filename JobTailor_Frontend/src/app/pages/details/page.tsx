@@ -6,18 +6,22 @@ import { getUserDetails, getWorkExperience } from "@/api/user";
 import {
   mapWorkExperienceResponseToCardItems,
   type WorkExperienceApiResponse,
+  type WorkExperienceApiRow,
 } from "@/mappers/workExperience";
+import CardVariation1 from "@/components/cards/card_templates/card_variation_1";
+import CardVariation2 from "@/components/cards/card_templates/card_variation_2";
 import { Empty } from "antd";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
 import isLoggedInCheck, { LoggedInUser } from "@/api/isLoggedIn";
 import { Briefcase, User } from "lucide-react";
+import { personalInformation, workExperience } from "@/components/templates/formTemplates";
 
 export default function Details() {
   const router = useRouter();
   const [userDetails, setUserDetails] = useState<any>({});
-  const [workExperienceList, setWorkExperienceList] = useState<any[]>([]);
+  const [workExperienceList, setWorkExperienceList] = useState<WorkExperienceApiResponse>({message: "", data: []});
   const [auth, setAuth] = useState<{
     isLoggedIn: boolean;
     user: LoggedInUser | null;
@@ -37,9 +41,10 @@ export default function Details() {
 
   const fetchWorkExperience = async () => {
     try {
-      const res = (await getWorkExperience()) as WorkExperienceApiResponse;
-      const items = mapWorkExperienceResponseToCardItems(res);
-      setWorkExperienceList(items);
+      const workExperience = (await getWorkExperience()) as WorkExperienceApiResponse;
+
+      setWorkExperienceList(workExperience);
+
     } catch (error) {
       console.error("Error fetching work experience:", error);
     }
@@ -72,21 +77,22 @@ export default function Details() {
   return (
     <div className="h-full w-full">
       <ScrollArea className="rounded-lg border h-full p-4 ">
-        <Card
+        <CardVariation1
           data={userDetails}
+          template={personalInformation}
+          templateName="personalInformation"
           title="Personal Information"
           subtitle="Basic Details"
-          baseName="personalInformation"
           icon={<User />}
-          onSaveSuccess={fetchUserDetails}
         />
-        <Card
-          data={workExperienceList}
+        <CardVariation2
+          apiResponse={workExperienceList}
+          template={workExperience}
+          templateName="workExperience"
           title="Work Experience"
           subtitle="Work Experience"
-          baseName="workExperience"
-          onSaveSuccess={fetchWorkExperience}
           icon={<Briefcase />}
+          onSave={fetchWorkExperience}
         />
       </ScrollArea>
     </div>

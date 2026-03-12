@@ -23,13 +23,15 @@ export interface WorkExperienceApiRow {
   is_current: boolean;
   technologies: string | null;
   updated_at: string | null;
-  tbl_work_experience_descriptions: WorkExperienceDescriptionRow[];
+  description_1: string | null;
+  description_2: string | null;
+  description_3: string | null;
 }
 
 /** Top-level API response */
 export interface WorkExperienceApiResponse {
   message: string;
-  workExperience: WorkExperienceApiRow[];
+  data: WorkExperienceApiRow[];
 }
 
 /**
@@ -45,7 +47,9 @@ export interface WorkExperienceCardItem extends Record<string, unknown> {
   end_date: string | null;
   is_current: boolean;
   technologies: string;
-  description: string;
+  description_1: string | null;
+  description_2: string | null;
+  description_3: string | null;
   /** Original nested descriptions for save flows that need IDs */
   _descriptions?: WorkExperienceDescriptionRow[];
 }
@@ -66,7 +70,6 @@ function joinDescriptions(
 export function mapWorkExperienceApiRowToCardItem(
   row: WorkExperienceApiRow,
 ): WorkExperienceCardItem {
-  const description = joinDescriptions(row.tbl_work_experience_descriptions);
   return {
     id: row.id,
     job_title: row.job_title ?? "",
@@ -75,9 +78,9 @@ export function mapWorkExperienceApiRowToCardItem(
     end_date: row.end_date,
     is_current: Boolean(row.is_current),
     technologies: row.technologies ?? "",
-    description,
-    // Preserve for PATCH/update payloads that send description rows by id
-    _descriptions: row.tbl_work_experience_descriptions,
+    description_1: row.description_1 ?? "",
+    description_2: row.description_2 ?? "",
+    description_3: row.description_3 ?? "",
     // Optional: keep audit fields if card ever needs them
     created_at: row.created_at,
     user_id: row.user_id,
@@ -91,7 +94,7 @@ export function mapWorkExperienceApiRowToCardItem(
 export function mapWorkExperienceResponseToCardItems(
   response: WorkExperienceApiResponse,
 ): WorkExperienceCardItem[] {
-  return (response.workExperience ?? []).map(mapWorkExperienceApiRowToCardItem);
+  return (response.data ?? []).map(mapWorkExperienceApiRowToCardItem);
 }
 
 /**
