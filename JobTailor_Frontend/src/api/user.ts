@@ -26,3 +26,13 @@ export function deleteWorkExperience(id: number) {
     body: JSON.stringify({ workExperience: { id } }),
   });
 }
+
+
+/** Backend expects POST body { workExperience: {...} } */
+export function addWorkExperience(workExperience: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
+    method: "POST",
+    body: JSON.stringify({ workExperience }),
+  });
+}
+

@@ -8,6 +8,7 @@ import {
   getFormatFunction,
   getEditFormatFunction,
   getUpdateFunction,
+  getAddFunction,
   getDeleteFunction,
 } from "./functionMapper";
 
@@ -28,7 +29,10 @@ export default function CardVariation2({
   icon,
   onSave,
 }: CardVariation2Props) {
-  if (apiResponse.data.length === 0) {
+  const isWorkExperience = templateName === "workExperience";
+  const [adding, setAdding] = useState(false);
+
+  if (apiResponse.data.length === 0 && !isWorkExperience) {
     return (
       <div
         className={
@@ -66,7 +70,32 @@ export default function CardVariation2({
               </p>
             </div>
           </div>
+          {isWorkExperience && !adding ? (
+            <button
+              type="button"
+              onClick={() => setAdding(true)}
+              className="rounded-[10px] border border-green-500 bg-green-500 px-3.5 py-1.5 text-[0.8rem] font-medium text-white hover:opacity-90"
+            >
+              Add
+            </button>
+          ) : null}
         </div>
+
+        {apiResponse.data.length === 0 && isWorkExperience && adding ? (
+          <div className="px-8 py-2 pb-7">
+            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <CardEditMode
+                data={{}}
+                templateName={templateName}
+                handleCancel={() => setAdding(false)}
+                onSave={() => {
+                  setAdding(false);
+                  onSave?.({});
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
 
         {apiResponse.data.map((item, index) => {
           const row = item as Record<string, unknown>;
@@ -83,6 +112,22 @@ export default function CardVariation2({
             />
           );
         })}
+
+        {isWorkExperience && adding && apiResponse.data.length > 0 ? (
+          <div className="px-8 py-2 pb-7">
+            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <CardEditMode
+                data={{}}
+                templateName={templateName}
+                handleCancel={() => setAdding(false)}
+                onSave={() => {
+                  setAdding(false);
+                  onSave?.({});
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -259,6 +304,8 @@ function CardEditMode({
   const [saving, setSaving] = useState(false);
 
   const updateFunction = getUpdateFunction(templateName);
+  const addFunction = getAddFunction(templateName);
+  const isNew = data.id == null || data.id === "";
 
   const handleChange = useCallback((key: string, value: unknown, kind: editModeResponseFormat["kind"]) => {
     setDraft((prev) => {
@@ -278,7 +325,15 @@ function CardEditMode({
     e.preventDefault();
     setSaving(true);
     try {
-      await updateFunction(draft);
+      if (isNew) {
+        if (templateName !== "workExperience") return;
+        const payload = { ...draft };
+        delete payload.id;
+        delete payload.user_id;
+        await addFunction(payload);
+      } else {
+        await updateFunction(draft);
+      }
       onSave?.(draft);
       handleCancel();
     } finally {
@@ -354,7 +409,7 @@ function CardEditMode({
           className="flex items-center gap-1.5 rounded-[10px] border border-green-500 bg-green-500 px-3.5 py-1.5 text-[0.8rem] font-medium text-white disabled:opacity-50"
         >
           <Check className="h-[13px] w-[13px]" stroke="currentColor" />
-          Save
+          {isNew ? "Add" : "Save"}
         </button>
       </div>
     </form>
