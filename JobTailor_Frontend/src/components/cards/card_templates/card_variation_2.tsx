@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useCallback } from "react";
 import type { editModeResponseFormat, viewModeResponseFormat } from "./formatter";
-import { Pencil, Trash2, Calendar, Check, X } from "lucide-react";
+import { Pencil, Trash2, Calendar, Check, X, Plus } from "lucide-react";
 import {
   getFormatFunction,
   getEditFormatFunction,
@@ -56,7 +56,7 @@ export default function CardVariation2({
             "flex items-center justify-between border-b border-gray-200 px-8 pb-5 pt-7"
           }
         >
-          <div className="flex items-center gap-[14px]">
+          <div className="flex items-center gap-[14px] ">
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full h-6 w-6 bg-green-500 text-white">
               {icon}
             </div>
@@ -70,18 +70,19 @@ export default function CardVariation2({
               </p>
             </div>
           </div>
-          {isWorkExperience && !adding ? (
+          { !adding ? (
             <button
               type="button"
               onClick={() => setAdding(true)}
-              className="rounded-[10px] border border-green-500 bg-green-500 px-3.5 py-1.5 text-[0.8rem] font-medium text-white hover:opacity-90"
+              className="inline-flex items-center gap-1.5 rounded-[10px] border border-green-500 bg-green-500 px-3.5 py-2 text-[0.8rem] font-medium text-white shadow-sm transition hover:bg-green-600 hover:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:scale-[0.98]"
             >
+              <Plus className="h-[14px] w-[14px]" strokeWidth={2.5} aria-hidden />
               Add
             </button>
           ) : null}
         </div>
 
-        {apiResponse.data.length === 0 && isWorkExperience && adding ? (
+        {apiResponse.data.length === 0 && adding ? (
           <div className="px-8 py-2 pb-7">
             <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white">
               <CardEditMode
@@ -97,6 +98,7 @@ export default function CardVariation2({
           </div>
         ) : null}
 
+        <div className="flex flex-col gap-4 mt-4" >
         {apiResponse.data.map((item, index) => {
           const row = item as Record<string, unknown>;
           const key =
@@ -112,10 +114,11 @@ export default function CardVariation2({
             />
           );
         })}
+        </div>
 
         {isWorkExperience && adding && apiResponse.data.length > 0 ? (
           <div className="px-8 py-2 pb-7">
-            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white">
+            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white ">
               <CardEditMode
                 data={{}}
                 templateName={templateName}
@@ -176,7 +179,7 @@ function CardEntries({
   return (
     <div
       className={
-        "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm"
+        "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm "
       }
     >
       <div className="px-8 py-2 pb-7">

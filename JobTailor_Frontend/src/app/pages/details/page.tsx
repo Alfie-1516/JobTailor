@@ -76,7 +76,8 @@ export default function Details() {
 
   return (
     <div className="h-full w-full">
-      <ScrollArea className="rounded-lg border h-full p-4 ">
+      <ScrollArea className="rounded-lg border h-full p-4">
+        <div className="flex flex-col gap-6">
         <CardVariation1
           data={userDetails}
           template={personalInformation}
@@ -93,6 +94,7 @@ export default function Details() {
           icon={<Briefcase />}
           onSave={fetchWorkExperience}
         />
+        </div>
       </ScrollArea>
     </div>
   );
