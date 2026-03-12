@@ -27,3 +27,22 @@ export const getEditFormatFunction = (baseName: string) => {
             return () => [];
     }
 }
+
+
+export const getUpdateFunction = (baseName: string) => {
+    switch (baseName) {
+        case "workExperience":
+            return updateWorkExperience;
+        default:
+            return () => {};
+    }
+}
+
+export const getDeleteFunction = (baseName: string) => {
+    switch (baseName) {
+        case "workExperience":
+            return deleteWorkExperience;
+        default:
+            return () => {};
+    }
+}

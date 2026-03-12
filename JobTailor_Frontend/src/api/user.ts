@@ -19,11 +19,10 @@ export function updateWorkExperience(data: any) {
   });
 }
 
+/** Backend expects DELETE /workExperience with body { workExperience: { id } } */
 export function deleteWorkExperience(id: number) {
-  return makeRequest(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience/${id}`,
-    {
-      method: "DELETE",
-    },
-  );
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
+    method: "DELETE",
+    body: JSON.stringify({ workExperience: { id } }),
+  });
 }

@@ -31,7 +31,7 @@ export interface WorkExperienceApiRow {
 /** Top-level API response */
 export interface WorkExperienceApiResponse {
   message: string;
-  data: WorkExperienceApiRow[];
+  data: [];
 }
 
 /**

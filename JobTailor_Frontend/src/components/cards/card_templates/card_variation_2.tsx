@@ -1,10 +1,15 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { editModeResponseFormat, viewModeResponseFormat } from "./formatter";
 import { Pencil, Trash2, Calendar, Check, X } from "lucide-react";
-import { getFormatFunction, getEditFormatFunction } from "./functionMapper";
+import {
+  getFormatFunction,
+  getEditFormatFunction,
+  getUpdateFunction,
+  getDeleteFunction,
+} from "./functionMapper";
 
 export type CardVariation2Props = {
   apiResponse: { message: string; data: [] };
@@ -12,6 +17,7 @@ export type CardVariation2Props = {
   title: string;
   subtitle: string;
   icon: React.ReactNode;
+  onSave?: (updatedItem: Record<string, unknown>) => void;
 };
 
 export default function CardVariation2({
@@ -20,6 +26,7 @@ export default function CardVariation2({
   title,
   subtitle,
   icon,
+  onSave,
 }: CardVariation2Props) {
   if (apiResponse.data.length === 0) {
     return (
@@ -61,9 +68,21 @@ export default function CardVariation2({
           </div>
         </div>
 
-        {apiResponse.data.map((item, index) => (
-          <CardEntries key={index} data={item} templateName={templateName} />
-        ))}
+        {apiResponse.data.map((item, index) => {
+          const row = item as Record<string, unknown>;
+          const key =
+            typeof row.id === "number" || typeof row.id === "string"
+              ? row.id
+              : index;
+          return (
+            <CardEntries
+              key={key}
+              data={row}
+              templateName={templateName}
+              onSave={onSave}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -72,11 +91,15 @@ export default function CardVariation2({
 function CardEntries({
   data,
   templateName,
+  onSave,
 }: {
   data: Record<string, unknown>;
   templateName: string;
+  onSave?: (updatedItem: Record<string, unknown>) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const handleEditClick = () => {
     setIsEditing(true);
   };
@@ -84,6 +107,26 @@ function CardEntries({
   const handleCancel = () => {
     setIsEditing(false);
   };
+
+  const handleDelete = async () => {
+    const id = data.id;
+    if (id == null || Number.isNaN(Number(id))) return;
+
+    const deleteFn = getDeleteFunction(templateName);
+    setDeleting(true);
+    try {
+      await deleteFn(Number(id));
+      onSave?.(data);
+    } catch (e) {
+      console.error(e);
+      window.alert("Failed to delete. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const canDelete =
+    templateName === "workExperience" && data.id != null && !Number.isNaN(Number(data.id));
 
   return (
     <div
@@ -97,17 +140,22 @@ function CardEntries({
             "mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-sm"
           }
         >
-          {!isEditing
-            ? cardViewMode({
-                data: data,
-                formatFunction: getFormatFunction(templateName),
-                handleEditClick,
-              })
-            : cardEditMode({
-                data: data,
-                formatFunction: getEditFormatFunction(templateName),
-                handleCancel,
-              })}
+          {!isEditing ? (
+            cardViewMode({
+              data: data,
+              formatFunction: getFormatFunction(templateName),
+              handleEditClick,
+              onDelete: canDelete ? handleDelete : undefined,
+              deleting,
+            })
+          ) : (
+            <CardEditMode
+              data={data}
+              templateName={templateName}
+              handleCancel={handleCancel}
+              onSave={onSave}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -119,11 +167,13 @@ function cardViewMode({
   formatFunction,
   handleEditClick,
   onDelete,
+  deleting = false,
 }: {
   data: Record<string, unknown>;
   formatFunction: (data: Record<string, unknown>) => viewModeResponseFormat;
   handleEditClick: () => void;
-  onDelete?: () => void;
+  onDelete?: () => void | Promise<void>;
+  deleting?: boolean;
 }) {
   const { entryTitle, entrySubtitle, chipRows, bodyField } =
     formatFunction(data);
@@ -177,36 +227,63 @@ function cardViewMode({
         </button>
         <button
           type="button"
-          disabled={!onDelete}
-          onClick={() => onDelete?.()}
+          disabled={!onDelete || deleting}
+          onClick={() => void onDelete?.()}
           className="flex items-center gap-1.5 rounded-[10px] border border-red-500 px-3 py-1.5 text-[0.8rem] font-medium text-red-600 hover:bg-red-50 disabled:pointer-events-none disabled:opacity-50"
         >
           <Trash2 className="h-[13px] w-[13px]" strokeWidth={2} />
-          Delete
+          {deleting ? "Deleting…" : "Delete"}
         </button>
       </div>
     </div>
   );
 }
 
-function cardEditMode({
+
+function CardEditMode({
   data,
-  formatFunction,
+  templateName,
   handleCancel,
+  onSave,
 }: {
   data: Record<string, unknown>;
-  formatFunction: (data: Record<string, unknown>) => editModeResponseFormat[];
+  templateName: string;
   handleCancel: () => void;
+  onSave?: (updatedItem: Record<string, unknown>) => void;
 }) {
-  const fields = formatFunction(data);
+  const formatFunction = getEditFormatFunction(templateName);
+  // Fresh draft each time edit mode mounts (unmount on Cancel)
+  const [draft, setDraft] = useState<Record<string, unknown>>(() => ({
+    ...data,
+  }));
+  const [saving, setSaving] = useState(false);
+
+  const updateFunction = getUpdateFunction(templateName);
+
+  const handleChange = useCallback((key: string, value: unknown, kind: editModeResponseFormat["kind"]) => {
+    setDraft((prev) => {
+      const next = { ...prev };
+      if (kind === "boolean") {
+        next[key] = value === true || value === "true";
+      } else {
+        next[key] = value;
+      }
+      return next;
+    });
+  }, []);
+
+  const fields = formatFunction(draft);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(data);
-  };
-
-  const handleChange = (key: string, value: unknown) => {
-    console.log(key, value);
+    setSaving(true);
+    try {
+      await updateFunction(draft);
+      onSave?.(draft);
+      handleCancel();
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -221,8 +298,8 @@ function cardEditMode({
                 </label>
                 <textarea
                   rows={3}
-                  value={String(value)}
-                  onChange={(e) => handleChange(key, e.target.value)}
+                  value={value == null ? "" : String(value)}
+                  onChange={(e) => handleChange(key, e.target.value, "textarea")}
                   className="w-full resize-none rounded border border-gray-200 px-2 py-1.5 text-[0.97rem] text-gray-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
                 />
               </div>
@@ -236,8 +313,8 @@ function cardEditMode({
                   {label}
                 </label>
                 <select
-                  value={String(value)}
-                  onChange={(e) => handleChange(key, e.target.value)}
+                  value={value === true || value === "true" ? "true" : "false"}
+                  onChange={(e) => handleChange(key, e.target.value, "boolean")}
                   className="w-full rounded border border-gray-200 px-2 py-1.5 text-[0.97rem] text-gray-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
                 >
                   <option value="true">Yes</option>
@@ -254,8 +331,8 @@ function cardEditMode({
               </label>
               <input
                 type="text"
-                value={String(value)}
-                onChange={(e) => handleChange(key, e.target.value)}
+                value={value == null ? "" : String(value)}
+                onChange={(e) => handleChange(key, e.target.value, "text")}
                 className="w-full rounded border border-gray-200 px-2 py-1.5 text-[0.97rem] text-gray-900 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
               />
             </div>
@@ -273,6 +350,7 @@ function cardEditMode({
         </button>
         <button
           type="submit"
+          disabled={saving}
           className="flex items-center gap-1.5 rounded-[10px] border border-green-500 bg-green-500 px-3.5 py-1.5 text-[0.8rem] font-medium text-white disabled:opacity-50"
         >
           <Check className="h-[13px] w-[13px]" stroke="currentColor" />

@@ -17,7 +17,7 @@ export const addWorkExperienceHandler = async (req, res) => {
 export const updateWorkExperienceHandler = async (req, res) => {
 try {
     const user = await tokenValidator(req);
-    res.status(200).json(await updateWorkExperience(req.body.workExperience, user));
+    res.status(200).json(await updateWorkExperience(req.body, user));
 } catch (error) {
     res.status(500).json({ error: "Failed to update work experience: " + error.message });
 }

@@ -87,7 +87,6 @@ export default function Details() {
         />
         <CardVariation2
           apiResponse={workExperienceList}
-          template={workExperience}
           templateName="workExperience"
           title="Work Experience"
           subtitle="Work Experience"
