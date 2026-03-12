@@ -29,10 +29,9 @@ export default function CardVariation2({
   icon,
   onSave,
 }: CardVariation2Props) {
-  const isWorkExperience = templateName === "workExperience";
   const [adding, setAdding] = useState(false);
 
-  if (apiResponse.data.length === 0 && !isWorkExperience) {
+  if (apiResponse.data.length === 0 ) {
     return (
       <div
         className={
@@ -82,9 +81,10 @@ export default function CardVariation2({
           ) : null}
         </div>
 
-        {apiResponse.data.length === 0 && adding ? (
-          <div className="px-8 py-2 pb-7">
-            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        {/* Single content column: even gap-4 between header, add form(s), and each entry */}
+        <div className="flex flex-col gap-4 px-8 pb-8 pt-4">
+          {apiResponse.data.length === 0 && adding ? (
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
               <CardEditMode
                 data={{}}
                 templateName={templateName}
@@ -95,42 +95,38 @@ export default function CardVariation2({
                 }}
               />
             </div>
-          </div>
-        ) : null}
+          ) : null}
 
-        <div className="flex flex-col gap-4 mt-4" >
-        {apiResponse.data.map((item, index) => {
-          const row = item as Record<string, unknown>;
-          const key =
-            typeof row.id === "number" || typeof row.id === "string"
-              ? row.id
-              : index;
-          return (
-            <CardEntries
-              key={key}
-              data={row}
-              templateName={templateName}
-              onSave={onSave}
-            />
-          );
-        })}
+          {apiResponse.data.map((item, index) => {
+            const row = item as Record<string, unknown>;
+            const key =
+              typeof row.id === "number" || typeof row.id === "string"
+                ? row.id
+                : index;
+            return (
+              <CardEntries
+                key={key}
+                data={row}
+                templateName={templateName}
+                onSave={onSave}
+              />
+            );
+          })}
+
+          {adding && apiResponse.data.length > 0 ? (
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+              <CardEditMode
+                data={{}}
+                templateName={templateName}
+                handleCancel={() => setAdding(false)}
+                onSave={() => {
+                  setAdding(false);
+                  onSave?.({});
+                }}
+              />
+            </div>
+          ) : null}
         </div>
-
-        {isWorkExperience && adding && apiResponse.data.length > 0 ? (
-          <div className="px-8 py-2 pb-7">
-            <div className="mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white ">
-              <CardEditMode
-                data={{}}
-                templateName={templateName}
-                handleCancel={() => setAdding(false)}
-                onSave={() => {
-                  setAdding(false);
-                  onSave?.({});
-                }}
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );
@@ -174,20 +170,12 @@ function CardEntries({
   };
 
   const canDelete =
-    templateName === "workExperience" && data.id != null && !Number.isNaN(Number(data.id));
+    templateName === "workExperience" &&
+    data.id != null &&
+    !Number.isNaN(Number(data.id));
 
   return (
-    <div
-      className={
-        "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm "
-      }
-    >
-      <div className="px-8 py-2 pb-7">
-        <div
-          className={
-            "mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-sm"
-          }
-        >
+    <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-sm">
           {!isEditing ? (
             cardViewMode({
               data: data,
@@ -204,8 +192,6 @@ function CardEntries({
               onSave={onSave}
             />
           )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -329,7 +315,6 @@ function CardEditMode({
     setSaving(true);
     try {
       if (isNew) {
-        if (templateName !== "workExperience") return;
         const payload = { ...draft };
         delete payload.id;
         delete payload.user_id;
