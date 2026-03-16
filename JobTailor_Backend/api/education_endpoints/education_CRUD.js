@@ -13,7 +13,7 @@ export async function addEducation(education, user) {
 
   return {
     message: "Education added successfully",
-    education: data,
+    data: data,
   };
 }
 
@@ -31,7 +31,7 @@ export async function getEducation(user) {
 
     return {
       message: "Education fetched successfully",
-      education: data,
+      data: data,
     };
 }
 
@@ -51,7 +51,7 @@ export async function updateEducation(education, user) {
 
     return {
       message: "Education updated successfully",
-      education: data,
+      data: data,
     };
 }
 
@@ -71,7 +71,7 @@ export async function deleteEducation(education, user) {
 
     return {
       message: "Education deleted successfully",
-      education: data,
+      data: data,
     };
 }
 

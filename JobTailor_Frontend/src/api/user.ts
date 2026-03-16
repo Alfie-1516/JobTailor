@@ -6,6 +6,13 @@ export function getUserDetails() {
   });
 }
 
+export function addWorkExperience(workExperience: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
+    method: "POST",
+    body: JSON.stringify({ workExperience }),
+  });
+}
+
 export function getWorkExperience() {
   return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
     method: "GET",
@@ -19,7 +26,6 @@ export function updateWorkExperience(data: any) {
   });
 }
 
-/** Backend expects DELETE /workExperience with body { workExperience: { id } } */
 export function deleteWorkExperience(id: number) {
   return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
     method: "DELETE",
@@ -27,12 +33,15 @@ export function deleteWorkExperience(id: number) {
   });
 }
 
-
-/** Backend expects POST body { workExperience: {...} } */
-export function addWorkExperience(workExperience: Record<string, unknown>) {
-  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workExperience`, {
+export function addEducation(education: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/education`, {
     method: "POST",
-    body: JSON.stringify({ workExperience }),
+    body: JSON.stringify({ education }),
   });
 }
 
+export function getEducation() {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/education`, {
+    method: "GET",
+  });
+}

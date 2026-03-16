@@ -31,7 +31,7 @@ export default function CardVariation2({
 }: CardVariation2Props) {
   const [adding, setAdding] = useState(false);
 
-  if (apiResponse.data.length === 0 ) {
+  if ( apiResponse === null  || apiResponse.data.length === 0 ) {
     return (
       <div
         className={

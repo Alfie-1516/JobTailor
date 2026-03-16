@@ -6,6 +6,7 @@ import {
 import {
     formatWorkExperience,
     formatWorkExperienceEditFields,
+    formatEducation,
   } from "./formatter";
 
 
@@ -13,6 +14,8 @@ export const getFormatFunction = (baseName: string) => {
     switch (baseName) {
         case "workExperience":
             return formatWorkExperience;
+        case "education":
+            return formatEducation;
         default:
             return () => ({
                 entryTitle: "",

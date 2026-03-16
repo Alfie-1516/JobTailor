@@ -66,3 +66,13 @@ export function formatWorkExperienceEditFields(
   return fields;
 }
 
+export function formatEducation(
+  data: Record<string, unknown>,
+): viewModeResponseFormat {
+  return {
+    entryTitle: String(data.institution_name) || "—",
+    entrySubtitle: String(data.degree),
+    chipRows: [{ key: "start_date", label: "Start Date", value: String(data.start_date) }, { key: "end_date", label: "End Date", value: String(data.end_date) }],
+    bodyField: [],
+  };
+}
