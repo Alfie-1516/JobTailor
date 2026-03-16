@@ -112,6 +112,7 @@ export default function Details() {
           title="Education"
           subtitle="Education"
           icon={<GraduationCap />}
+          onSave={fetchEducation}
         />
         </div>
       </ScrollArea>

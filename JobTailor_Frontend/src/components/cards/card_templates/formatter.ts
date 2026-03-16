@@ -72,7 +72,19 @@ export function formatEducation(
   return {
     entryTitle: String(data.institution_name) || "—",
     entrySubtitle: String(data.degree),
-    chipRows: [{ key: "start_date", label: "Start Date", value: String(data.start_date) }, { key: "end_date", label: "End Date", value: String(data.end_date) }],
+    chipRows: [{key: "major", label: "Major", value: String(data.major) }, { key: "start_date", label: "Start Date", value: String(data.start_date) }, { key: "end_date", label: "End Date", value: String(data.end_date) }],
     bodyField: [],
   };
+}
+
+export function formatEducationEditFields(
+  data: Record<string, unknown>,
+): editModeResponseFormat[] {
+  return [
+    { key: "institution_name", label: "Institution", kind: "text", value: data.institution_name },
+    { key: "degree", label: "Degree", kind: "text", value: data.degree },
+    { key: "major", label: "Major", kind: "text", value: data.major },
+    { key: "start_date", label: "Start Date", kind: "text", value: data.start_date },
+    { key: "end_date", label: "End Date", kind: "text", value: data.end_date },
+  ];
 }

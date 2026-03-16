@@ -45,3 +45,17 @@ export function getEducation() {
     method: "GET",
   });
 }
+
+export function updateEducation(data: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/education`, {
+    method: "PUT",
+    body: JSON.stringify({ education: data }),
+  });
+}
+
+export function deleteEducation(id: number) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/education`, {
+    method: "DELETE",
+    body: JSON.stringify({ education: { id } }),
+  });
+}
