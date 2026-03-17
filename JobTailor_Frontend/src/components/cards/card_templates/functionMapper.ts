@@ -8,6 +8,9 @@ import {
   addProject,
   updateProject,
   deleteProject,
+  addCertification,
+  updateCertification,
+  deleteCertification,
 } from "@/api/user";
 import {
   formatWorkExperience,
@@ -16,6 +19,8 @@ import {
   formatEducationEditFields,
   formatProject,
   formatProjectEditFields,
+  formatCertification,
+  formatCertificationEditFields,
 } from "./formatter";
 
 
@@ -27,6 +32,8 @@ export const getFormatFunction = (baseName: string) => {
       return formatEducation;
     case "project":
       return formatProject;
+    case "certification":
+      return formatCertification;
     default:
       return () => ({
         entryTitle: "",
@@ -45,6 +52,8 @@ export const getEditFormatFunction = (baseName: string) => {
       return formatEducationEditFields;
     case "project":
       return formatProjectEditFields;
+    case "certification":
+      return formatCertificationEditFields;
     default:
       return () => [];
   }
@@ -59,6 +68,8 @@ export const getUpdateFunction = (baseName: string) => {
       return updateEducation;
     case "project":
       return updateProject;
+    case "certification":
+      return updateCertification;
     default:
       return () => {};
   }
@@ -72,6 +83,8 @@ export const getAddFunction = (baseName: string) => {
       return addEducation;
     case "project":
       return addProject;
+    case "certification":
+      return addCertification;
     default:
       return () => {};
   }
@@ -85,6 +98,8 @@ export const getDeleteFunction = (baseName: string) => {
       return deleteEducation;
     case "project":
       return deleteProject;
+    case "certification":
+      return deleteCertification;
     default:
       return () => {};
   }

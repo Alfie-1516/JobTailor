@@ -86,3 +86,30 @@ export function deleteProject(id: number) {
     body: JSON.stringify({ project: { id } }),
   });
 }
+
+export function getCertifications() {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/certification`, {
+    method: "GET",
+  });
+}
+
+export function addCertification(certification: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/certification`, {
+    method: "POST",
+    body: JSON.stringify({ certification }),
+  });
+}
+
+export function updateCertification(data: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/certification`, {
+    method: "PUT",
+    body: JSON.stringify({ certification: data }),
+  });
+}
+
+export function deleteCertification(id: number) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/certification`, {
+    method: "DELETE",
+    body: JSON.stringify({ certification: { id } }),
+  });
+}

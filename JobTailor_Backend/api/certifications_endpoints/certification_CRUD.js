@@ -14,7 +14,7 @@ export async function addCertification(certification, user) {
 
   return {
     message: "Certification added successfully",
-    certification: data,
+    data: data,
   };
 }
 
@@ -31,7 +31,7 @@ export async function getCertifications(user) {
 
   return {
     message: "Certifications fetched successfully",
-    certifications: data,
+    data: data,
   };
 }
 
@@ -51,7 +51,7 @@ export async function updateCertification(certification, user) {
 
   return {
     message: "Certification updated successfully",
-    certification: data,
+    data: data,
   };
 }
 
@@ -71,6 +71,6 @@ export async function deleteCertification(certification, user) {
 
   return {
     message: "Certification deleted successfully",
-    certification: data,
+    data: data,
   };
 }

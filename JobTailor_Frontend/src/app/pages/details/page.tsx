@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getEducation, getUserDetails, getWorkExperience, getProjects } from "@/api/user";
+import { getCertifications, getEducation, getUserDetails, getWorkExperience, getProjects } from "@/api/user";
 import { type WorkExperienceApiResponse } from "@/mappers/workExperience";
 import CardVariation1 from "@/components/cards/card_templates/card_variation_1";
 import CardVariation2 from "@/components/cards/card_templates/card_variation_2";
@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
 import isLoggedInCheck, { LoggedInUser } from "@/api/isLoggedIn";
-import { Briefcase, FolderGit2, GraduationCap, User } from "lucide-react";
+import { Award, Briefcase, FolderGit2, GraduationCap, User } from "lucide-react";
 import { personalInformation } from "@/components/templates/formTemplates";
+import { CertificationApiResponse } from "@/mappers/certification";
 import { EducationApiResponse } from "@/mappers/education";
 import { ProjectApiResponse } from "@/mappers/project";
 
@@ -21,6 +22,7 @@ export default function Details() {
   const [workExperienceList, setWorkExperienceList] = useState<WorkExperienceApiResponse>({ message: "", data: [] });
   const [educationList, setEducationList] = useState<EducationApiResponse>({ message: "", data: [] });
   const [projectList, setProjectList] = useState<ProjectApiResponse>({ message: "", data: [] });
+  const [certificationList, setCertificationList] = useState<CertificationApiResponse>({ message: "", data: [] });
   const [auth, setAuth] = useState<{
     isLoggedIn: boolean;
     user: LoggedInUser | null;
@@ -67,6 +69,15 @@ export default function Details() {
     }
   };
 
+  const fetchCertifications = async () => {
+    try {
+      const certifications = (await getCertifications()) as CertificationApiResponse;
+      setCertificationList(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications:", error);
+    }
+  };
+
   useEffect(() => {
     isLoggedInCheck().then((result) => {
       setAuth(result);
@@ -75,6 +86,7 @@ export default function Details() {
         fetchWorkExperience();
         fetchEducation();
         fetchProjects();
+        fetchCertifications();
       }
     });
   }, []);
@@ -131,6 +143,14 @@ export default function Details() {
           subtitle="Projects"
           icon={<FolderGit2 />}
           onSave={fetchProjects}
+        />
+        <CardVariation2
+          apiResponse={certificationList}
+          templateName="certification"
+          title="Certifications"
+          subtitle="Certifications"
+          icon={<Award />}
+          onSave={fetchCertifications}
         />
         </div>
       </ScrollArea>

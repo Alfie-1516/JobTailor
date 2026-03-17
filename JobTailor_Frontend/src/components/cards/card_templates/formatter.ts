@@ -130,3 +130,31 @@ export function formatProjectEditFields(
     { key: "description_3", label: "Description 3", kind: "textarea", value: data.description_3 },
   ];
 }
+
+export function formatCertification(
+  data: Record<string, unknown>,
+): viewModeResponseFormat {
+  const chipDefs = [{ key: "date_obtained", label: "Date Obtained" }];
+  const chipRows: ChipRow[] = [];
+  for (const { key, label } of chipDefs) {
+    const value = formatScalar(key, data[key], data);
+    if (!value) continue;
+    chipRows.push({ key, label, value });
+  }
+  return {
+    entryTitle: String(data.certification_name) || "—",
+    entrySubtitle: String(data.certification_issuer),
+    chipRows,
+    bodyField: [],
+  };
+}
+
+export function formatCertificationEditFields(
+  data: Record<string, unknown>,
+): editModeResponseFormat[] {
+  return [
+    { key: "certification_name", label: "Certification Name", kind: "text", value: data.certification_name },
+    { key: "certification_issuer", label: "Issuer", kind: "text", value: data.certification_issuer },
+    { key: "date_obtained", label: "Date Obtained", kind: "text", value: data.date_obtained },
+  ];
+}
