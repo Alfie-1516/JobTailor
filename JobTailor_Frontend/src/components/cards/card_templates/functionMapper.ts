@@ -5,30 +5,37 @@ import {
   updateEducation,
   deleteEducation,
   addEducation,
+  addProject,
+  updateProject,
+  deleteProject,
 } from "@/api/user";
 import {
   formatWorkExperience,
   formatWorkExperienceEditFields,
   formatEducation,
   formatEducationEditFields,
+  formatProject,
+  formatProjectEditFields,
 } from "./formatter";
 
 
 export const getFormatFunction = (baseName: string) => {
-    switch (baseName) {
-        case "workExperience":
-            return formatWorkExperience;
-        case "education":
-            return formatEducation;
-        default:
-            return () => ({
-                entryTitle: "",
-                entrySubtitle: "",
-                chipRows: [],
-                bodyField: [],
-            });
-    }
-}
+  switch (baseName) {
+    case "workExperience":
+      return formatWorkExperience;
+    case "education":
+      return formatEducation;
+    case "project":
+      return formatProject;
+    default:
+      return () => ({
+        entryTitle: "",
+        entrySubtitle: "",
+        chipRows: [],
+        bodyField: [],
+      });
+  }
+};
 
 export const getEditFormatFunction = (baseName: string) => {
   switch (baseName) {
@@ -36,6 +43,8 @@ export const getEditFormatFunction = (baseName: string) => {
       return formatWorkExperienceEditFields;
     case "education":
       return formatEducationEditFields;
+    case "project":
+      return formatProjectEditFields;
     default:
       return () => [];
   }
@@ -48,6 +57,8 @@ export const getUpdateFunction = (baseName: string) => {
       return updateWorkExperience;
     case "education":
       return updateEducation;
+    case "project":
+      return updateProject;
     default:
       return () => {};
   }
@@ -59,6 +70,8 @@ export const getAddFunction = (baseName: string) => {
       return addWorkExperience;
     case "education":
       return addEducation;
+    case "project":
+      return addProject;
     default:
       return () => {};
   }
@@ -70,6 +83,8 @@ export const getDeleteFunction = (baseName: string) => {
       return deleteWorkExperience;
     case "education":
       return deleteEducation;
+    case "project":
+      return deleteProject;
     default:
       return () => {};
   }

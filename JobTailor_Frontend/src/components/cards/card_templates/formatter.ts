@@ -88,3 +88,45 @@ export function formatEducationEditFields(
     { key: "end_date", label: "End Date", kind: "text", value: data.end_date },
   ];
 }
+
+export function formatProject(
+  data: Record<string, unknown>,
+): viewModeResponseFormat {
+  const chipDefs = [
+    { key: "start_date", label: "Start Date" },
+    { key: "end_date", label: "End Date" },
+    { key: "technologies", label: "Technologies" },
+  ];
+  const chipRows: ChipRow[] = [];
+  for (const { key, label } of chipDefs) {
+    const value = formatScalar(key, data[key], data);
+    if (!value) continue;
+    chipRows.push({ key, label, value });
+  }
+  return {
+    entryTitle: String(data.project_name) || "—",
+    entrySubtitle: String(data.technologies),
+    chipRows,
+    bodyField: [
+      { key: "description_1", value: String(data.description_1) },
+      { key: "description_2", value: String(data.description_2) },
+      { key: "description_3", value: String(data.description_3) },
+    ],
+  };
+}
+
+export function formatProjectEditFields(
+  data: Record<string, unknown>,
+): editModeResponseFormat[] {
+  return [
+    { key: "project_name", label: "Project Name", kind: "text", value: data.project_name },
+    { key: "technologies", label: "Technologies", kind: "text", value: data.technologies },
+    { key: "project_url", label: "Project URL", kind: "text", value: data.project_url },
+    { key: "github_url", label: "GitHub URL", kind: "text", value: data.github_url },
+    { key: "start_date", label: "Start Date", kind: "text", value: data.start_date },
+    { key: "end_date", label: "End Date", kind: "text", value: data.end_date },
+    { key: "description_1", label: "Description 1", kind: "textarea", value: data.description_1 },
+    { key: "description_2", label: "Description 2", kind: "textarea", value: data.description_2 },
+    { key: "description_3", label: "Description 3", kind: "textarea", value: data.description_3 },
+  ];
+}

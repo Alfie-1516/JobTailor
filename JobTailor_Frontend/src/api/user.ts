@@ -59,3 +59,30 @@ export function deleteEducation(id: number) {
     body: JSON.stringify({ education: { id } }),
   });
 }
+
+export function getProjects() {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
+    method: "GET",
+  });
+}
+
+export function addProject(project: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
+    method: "POST",
+    body: JSON.stringify({ project }),
+  });
+}
+
+export function updateProject(data: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
+    method: "PUT",
+    body: JSON.stringify({ project: data }),
+  });
+}
+
+export function deleteProject(id: number) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
+    method: "DELETE",
+    body: JSON.stringify({ project: { id } }),
+  });
+}

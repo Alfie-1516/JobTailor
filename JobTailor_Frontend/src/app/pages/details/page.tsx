@@ -1,10 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getEducation, getUserDetails, getWorkExperience } from "@/api/user";
-import {
-  type WorkExperienceApiResponse,
-} from "@/mappers/workExperience";
+import { getEducation, getUserDetails, getWorkExperience, getProjects } from "@/api/user";
+import { type WorkExperienceApiResponse } from "@/mappers/workExperience";
 import CardVariation1 from "@/components/cards/card_templates/card_variation_1";
 import CardVariation2 from "@/components/cards/card_templates/card_variation_2";
 import { Empty } from "antd";
@@ -12,15 +10,17 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
 import isLoggedInCheck, { LoggedInUser } from "@/api/isLoggedIn";
-import { Briefcase, GraduationCap, User } from "lucide-react";
+import { Briefcase, FolderGit2, GraduationCap, User } from "lucide-react";
 import { personalInformation } from "@/components/templates/formTemplates";
 import { EducationApiResponse } from "@/mappers/education";
+import { ProjectApiResponse } from "@/mappers/project";
 
 export default function Details() {
   const router = useRouter();
   const [userDetails, setUserDetails] = useState<any>({});
-  const [workExperienceList, setWorkExperienceList] = useState<WorkExperienceApiResponse>({message: "", data: []});
-  const [educationList, setEducationList] = useState<EducationApiResponse>({message: "", data: []});
+  const [workExperienceList, setWorkExperienceList] = useState<WorkExperienceApiResponse>({ message: "", data: [] });
+  const [educationList, setEducationList] = useState<EducationApiResponse>({ message: "", data: [] });
+  const [projectList, setProjectList] = useState<ProjectApiResponse>({ message: "", data: [] });
   const [auth, setAuth] = useState<{
     isLoggedIn: boolean;
     user: LoggedInUser | null;
@@ -58,6 +58,15 @@ export default function Details() {
     }
   };
 
+  const fetchProjects = async () => {
+    try {
+      const projects = (await getProjects()) as ProjectApiResponse;
+      setProjectList(projects);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
   useEffect(() => {
     isLoggedInCheck().then((result) => {
       setAuth(result);
@@ -65,6 +74,7 @@ export default function Details() {
         fetchUserDetails();
         fetchWorkExperience();
         fetchEducation();
+        fetchProjects();
       }
     });
   }, []);
@@ -113,6 +123,14 @@ export default function Details() {
           subtitle="Education"
           icon={<GraduationCap />}
           onSave={fetchEducation}
+        />
+        <CardVariation2
+          apiResponse={projectList}
+          templateName="project"
+          title="Projects"
+          subtitle="Projects"
+          icon={<FolderGit2 />}
+          onSave={fetchProjects}
         />
         </div>
       </ScrollArea>

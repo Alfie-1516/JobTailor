@@ -14,7 +14,7 @@ export async function addProject(project, user) {
 
   return {
     message: "Project added successfully",
-    project: data,
+    data: data,
   };
 }
 
@@ -22,7 +22,7 @@ export async function getProjects(user) {
   const userId = await getUserIdFromAuthId(user.id);
   const { data, error } = await supabase
     .from("tbl_projects")
-    .select("*, tbl_project_description(*)")
+    .select("*")
     .eq("user_id", userId);
 
   if (error) {
@@ -31,7 +31,7 @@ export async function getProjects(user) {
 
   return {
     message: "Projects fetched successfully",
-    projects: data,
+    data: data,
   };
 }
 
@@ -51,7 +51,7 @@ export async function updateProject(project, user) {
 
   return {
     message: "Project updated successfully",
-    project: data,
+    data: data,
   };
 }
 
@@ -71,6 +71,6 @@ export async function deleteProject(project, user) {
 
   return {
     message: "Project deleted successfully",
-    project: data,
+    data: data,
   };
 }

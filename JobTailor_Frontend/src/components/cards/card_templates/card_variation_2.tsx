@@ -170,7 +170,7 @@ function CardEntries({
   };
 
   const canDelete =
-    (templateName === "workExperience" || templateName === "education") &&
+    (templateName === "workExperience" || templateName === "education" || templateName === "project") &&
     data.id != null &&
     !Number.isNaN(Number(data.id));
 
