@@ -14,8 +14,9 @@ export type viewModeResponseFormat = {
 export type editModeResponseFormat = {
   key: string;
   label: string;
-  kind: "text" | "boolean" | "textarea";
+  kind: "text" | "boolean" | "textarea" | "number" | "select";
   value: unknown;
+  options?: { value: string; label: string }[];
 };
 
 //This function is used to format the data for the view mode of the work experience card
@@ -156,5 +157,52 @@ export function formatCertificationEditFields(
     { key: "certification_name", label: "Certification Name", kind: "text", value: data.certification_name },
     { key: "certification_issuer", label: "Issuer", kind: "text", value: data.certification_issuer },
     { key: "date_obtained", label: "Date Obtained", kind: "text", value: data.date_obtained },
+  ];
+}
+
+export function formatSkill(data: Record<string, unknown>): viewModeResponseFormat {
+  const cat = data.skill_category;
+  const sub =
+    cat != null && String(cat).trim() !== ""
+      ? String(cat).replace(/_/g, " ")
+      : "";
+  return {
+    entryTitle: String(data.skill_name) || "—",
+    entrySubtitle: sub,
+    chipRows: [
+      {
+        key: "proficiency_level",
+        label: "Level",
+        value: String(data.proficiency_level ?? "").toLowerCase(),
+      },
+    ],
+    bodyField: [],
+  };
+}
+
+export function formatSkillEditFields(
+  data: Record<string, unknown>,
+): editModeResponseFormat[] {
+  const prof = String(data.proficiency_level ?? "intermediate").toLowerCase();
+  return [
+    { key: "skill_name", label: "Skill Name", kind: "text", value: data.skill_name },
+    { key: "skill_category", label: "Category", kind: "text", value: data.skill_category },
+    {
+      key: "proficiency_level",
+      label: "Proficiency",
+      kind: "select",
+      value: ["beginner", "intermediate", "expert"].includes(prof) ? prof : "intermediate",
+      options: [
+        { value: "beginner", label: "Beginner" },
+        { value: "intermediate", label: "Intermediate" },
+        { value: "expert", label: "Expert" },
+      ],
+    },
+    {
+      key: "years_of_experience",
+      label: "Years of experience",
+      kind: "number",
+      value: data.years_of_experience ?? "",
+    },
   ];
 }

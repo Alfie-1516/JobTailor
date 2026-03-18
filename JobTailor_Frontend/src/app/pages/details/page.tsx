@@ -167,7 +167,8 @@ export default function Details() {
           onSave={fetchCertifications}
         />
         <CardVariation3
-          apiResponse={skillsList}
+          apiResponse={skillsList as { message: string; data: [] }}
+          templateName="skill"
           title="Skills"
           subtitle="SKILLS"
           icon={<Lightbulb className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />}

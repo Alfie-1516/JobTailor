@@ -11,6 +11,9 @@ import {
   addCertification,
   updateCertification,
   deleteCertification,
+  addSkill,
+  updateSkill,
+  deleteSkill,
 } from "@/api/user";
 import {
   formatWorkExperience,
@@ -21,8 +24,20 @@ import {
   formatProjectEditFields,
   formatCertification,
   formatCertificationEditFields,
+  formatSkill,
+  formatSkillEditFields,
 } from "./formatter";
 
+/** Templates wired for add/update/delete in card grids (variation 3). */
+export function templateHasGridCrud(baseName: string): boolean {
+  return (
+    baseName === "skill" ||
+    baseName === "workExperience" ||
+    baseName === "education" ||
+    baseName === "project" ||
+    baseName === "certification"
+  );
+}
 
 export const getFormatFunction = (baseName: string) => {
   switch (baseName) {
@@ -34,6 +49,8 @@ export const getFormatFunction = (baseName: string) => {
       return formatProject;
     case "certification":
       return formatCertification;
+    case "skill":
+      return formatSkill;
     default:
       return () => ({
         entryTitle: "",
@@ -54,6 +71,8 @@ export const getEditFormatFunction = (baseName: string) => {
       return formatProjectEditFields;
     case "certification":
       return formatCertificationEditFields;
+    case "skill":
+      return formatSkillEditFields;
     default:
       return () => [];
   }
@@ -70,6 +89,8 @@ export const getUpdateFunction = (baseName: string) => {
       return updateProject;
     case "certification":
       return updateCertification;
+    case "skill":
+      return updateSkill;
     default:
       return () => {};
   }
@@ -85,6 +106,8 @@ export const getAddFunction = (baseName: string) => {
       return addProject;
     case "certification":
       return addCertification;
+    case "skill":
+      return addSkill;
     default:
       return () => {};
   }
@@ -100,6 +123,8 @@ export const getDeleteFunction = (baseName: string) => {
       return deleteProject;
     case "certification":
       return deleteCertification;
+    case "skill":
+      return deleteSkill;
     default:
       return () => {};
   }
