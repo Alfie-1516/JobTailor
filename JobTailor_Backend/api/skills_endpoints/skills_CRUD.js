@@ -14,7 +14,7 @@ export async function addSkill(skill, user) {
 
   return {
     message: "Skill added successfully",
-    skill: data,
+    data: data,
   };
 }
 
@@ -31,7 +31,7 @@ export async function getSkills(user) {
 
   return {
     message: "Skills fetched successfully",
-    skills: data,
+    data: data,
   };
 }
 
@@ -51,7 +51,7 @@ export async function updateSkill(skill, user) {
 
   return {
     message: "Skill updated successfully",
-    skill: data,
+    data: data,
   };
 }
 
@@ -71,6 +71,6 @@ export async function deleteSkill(skill, user) {
 
   return {
     message: "Skill deleted successfully",
-    skill: data,
+    data: data,
   };
 }

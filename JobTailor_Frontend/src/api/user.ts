@@ -113,3 +113,30 @@ export function deleteCertification(id: number) {
     body: JSON.stringify({ certification: { id } }),
   });
 }
+
+export function getSkills() {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/skill`, {
+    method: "GET",
+  });
+}
+
+export function addSkill(skill: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/skill`, {
+    method: "POST",
+    body: JSON.stringify({ skill }),
+  });
+}
+
+export function updateSkill(data: Record<string, unknown>) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/skill`, {
+    method: "PUT",
+    body: JSON.stringify({ skill: data }),
+  });
+}
+
+export function deleteSkill(id: number) {
+  return makeRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/skill`, {
+    method: "DELETE",
+    body: JSON.stringify({ skill: { id } }),
+  });
+}
