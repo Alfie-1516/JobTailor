@@ -30,18 +30,7 @@ export default function CardVariation2({
   onSave,
 }: CardVariation2Props) {
   const [adding, setAdding] = useState(false);
-
-  if ( apiResponse === null  || apiResponse.data.length === 0 ) {
-    return (
-      <div
-        className={
-          "w-full overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm mb-4 p-6 text-center text-gray-500"
-        }
-      >
-        No information available
-      </div>
-    );
-  }
+  const entries = apiResponse?.data ?? [];
 
   return (
     <div className="space-y-4">
@@ -83,7 +72,7 @@ export default function CardVariation2({
 
         {/* Single content column: even gap-4 between header, add form(s), and each entry */}
         <div className="flex flex-col gap-4 px-8 pb-8 pt-4">
-          {apiResponse.data.length === 0 && adding ? (
+          {entries.length === 0 && adding ? (
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
               <CardEditMode
                 data={{}}
@@ -97,7 +86,7 @@ export default function CardVariation2({
             </div>
           ) : null}
 
-          {apiResponse.data.map((item, index) => {
+          {entries.map((item, index) => {
             const row = item as Record<string, unknown>;
             const key =
               typeof row.id === "number" || typeof row.id === "string"
@@ -113,7 +102,7 @@ export default function CardVariation2({
             );
           })}
 
-          {adding && apiResponse.data.length > 0 ? (
+          {adding && entries.length > 0 ? (
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
               <CardEditMode
                 data={{}}
