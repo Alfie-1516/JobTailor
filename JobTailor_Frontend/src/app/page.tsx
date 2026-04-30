@@ -43,7 +43,7 @@ export default function HeroSectionSimpleCentred() {
           {/* End Buttons */}
           <div className="mt-5 flex items-center justify-center gap-x-1 sm:gap-x-3">
             <span className="text-muted-foreground text-sm">Trusted by:</span>
-            <span className="text-sm font-bold">10,000+ Job Seekers</span>
+            <span className="text-sm font-bold">20,000+ Job Seekers</span>
             <svg
               className="text-muted-foreground h-5 w-5"
               width={16}
