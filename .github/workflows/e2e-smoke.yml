@@ -1,0 +1,44 @@
+name: Frontend E2E Smoke (Manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  frontend-e2e-smoke:
+    name: Frontend E2E Smoke
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: JobTailor_Frontend
+    env:
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: JobTailor_Frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$E2E_EMAIL" ] || [ -z "$E2E_PASSWORD" ] || [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] || [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
+            echo "Missing one or more required secrets."
+            exit 1
+          fi
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        run: npm run e2e
