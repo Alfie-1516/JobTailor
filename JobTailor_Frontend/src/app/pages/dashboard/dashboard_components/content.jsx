@@ -3,47 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import Stage1 from "./stage1";
 import Stage2 from "./stage2";
 import Stage3 from "./stage3";
-import { useUser } from "@/context/UserContext";
-import { get_user_details, generate_resume, generate_cover_letter, generate_interview_notes } from "@/api";
-import { generateResumeHTML } from "@/components/templates/resume";
-import { generateCoverLetterHTML } from "@/components/templates/coverLetter";
-import { generateInterviewNotesHTML } from "@/components/templates/interviewNotes";
 
 
 export default function Content({ setCurrentPage }) {
-  const { user } = useUser();
   const containerRef = useRef(null);
   const [formData, setFormData] = useState({
     stage1: null,
     stage2: null,
   });
-  const [userDetails, setUserDetails] = useState({});
   const [resumeGenerated, setResumeGenerated] = useState(false);
   const [coverLetterGenerated, setCoverLetterGenerated] = useState(false);
   const [interviewNotesGenerated, setInterviewNotesGenerated] = useState(false);
-
-  const fetchUserDetails = async () => {
-    if (!user?._id) return;
-    
-    try {
-      const details = await get_user_details(user._id);
-      if (details.success) {
-        setUserDetails(details.data);
-      } else {
-        // No user details found - this is normal for new users
-      }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-    }
-  };
-
-  const refreshUserDetails = () => {
-    fetchUserDetails();
-  };
-
-  useEffect(() => {
-    fetchUserDetails();
-  }, [user?._id]);
 
   const scrollToNextPage = () => {
     try {
@@ -87,107 +57,14 @@ export default function Content({ setCurrentPage }) {
     setFormData((prev) => ({ ...prev, stage1: data }));
   };
 
-  const handleStage2Data = async (data) => {
+  const handleStage2Data = (data) => {
     try {
       setFormData((prev) => ({ ...prev, stage2: data }));
-
-
-      // Call generate APIs if we have the required data
-      if (formData.stage1?.jobDescription && userDetails) {
-        // Clear all files in the files folder
-        try {
-          await fetch('/api/clear-files', {
-            method: 'POST'
-          });
-        } catch (error) {
-          console.error("Error clearing files:", error);
-        }
-        const companyName = formData.stage1.companyName || "Unknown Company";
-        const jobDescription = formData.stage1.jobDescription + " at " + companyName;
-        const userDetailsString = JSON.stringify(userDetails);
-        
-
-        const resumeResult = await generate_resume(
-          jobDescription,
-          userDetailsString
-        );
-        const htmlContent = generateResumeHTML(resumeResult);
-        try {
-          const response = await fetch('/api/save-resume', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              htmlContent: htmlContent
-            })
-          });
-          
-          if (response.ok) {
-            console.log("Resume HTML saved to resume.txt");
-            setResumeGenerated(true);
-          } else {
-            console.error("Failed to save resume HTML");
-          }
-        } catch (error) {
-          console.error("Error saving resume HTML:", error);
-        }
-        const coverLetterResult = await generate_cover_letter(
-          jobDescription,
-          userDetailsString,
-          
-        );
-        const coverLetterHtmlContent = generateCoverLetterHTML(coverLetterResult);
-        try {
-          const response = await fetch('/api/save-coverLetter', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              htmlContent: coverLetterHtmlContent
-            })
-          });
-          
-          if (response.ok) {
-            console.log("Cover Letter HTML saved to coverLetter.txt");
-            setCoverLetterGenerated(true);
-          } else {
-            console.error("Failed to save cover Letter HTML");
-          }
-        } catch (error) {
-          console.error("Error saving resume HTML:", error);
-        }
-        const interviewNotesResult = await generate_interview_notes(
-          jobDescription,
-          userDetailsString
-        );
-        const interviewNotesHtmlContent = generateInterviewNotesHTML(interviewNotesResult);
-        try {
-          const response = await fetch('/api/save-InterviewNotes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              htmlContent: interviewNotesHtmlContent
-            })
-          });
-          
-          if (response.ok) {
-            console.log("Interview Notes HTML saved to interviewNotes.txt");
-            setInterviewNotesGenerated(true);
-          } else {
-            console.error("Failed to save interview Notes HTML" , response);
-          }
-        } catch (error) {
-          console.error("Error saving interview Notes HTML:", error);
-        }
-
-        
-      } else {
-        console.log("Missing required data for document generation");
-      }
+      // Temporary local-only flow while generation APIs are rebuilt.
+      // Mark steps complete so the dashboard can progress to stage 3.
+      setResumeGenerated(true);
+      setCoverLetterGenerated(true);
+      setInterviewNotesGenerated(true);
     } catch (error) {
       console.error("Error in handleStage2Data:", error);
     }

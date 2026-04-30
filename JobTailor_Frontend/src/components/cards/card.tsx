@@ -9,7 +9,9 @@ import {
 
 export type CardProps = {
   /** Single record (e.g. user details) or list (e.g. work experience) */
-  data: Record<string, string|number|boolean|null|undefined>;
+  data:
+    | Record<string, string | number | boolean | null | undefined>
+    | { message: string; data: [] };
   title: string;
   subtitle: string;
   baseName: string;
@@ -30,7 +32,7 @@ export default function Card({
     <div className="bg-white rounded-lg6 mb-4 ">
       {baseName === "personalInformation" && (
         <CardVariation1
-          data={data}
+          data={data as Record<string, string | number | boolean | null | undefined>}
           template={template}
           templateName={baseName}
           title={title}
@@ -41,8 +43,7 @@ export default function Card({
       )}
       {baseName === "workExperience" && (
         <CardVariation2
-          data={data}
-          template={template}
+          apiResponse={data as { message: string; data: [] }}
           templateName={baseName}
           title={title}
           subtitle={subtitle}

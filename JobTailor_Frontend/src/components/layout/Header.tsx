@@ -14,9 +14,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "antd";
 import { Menu } from "lucide-react";
-import { useUser } from "@/context/UserContext";
+import type { Session } from "@supabase/supabase-js";
 import isLoggedInCheck, { type LoggedInUser } from "@/api/isLoggedIn";
 import { signOut } from "@/auth/signOut";
+import { supabase } from "@/lib/supabaseClient";
 
 function getInitials(user: LoggedInUser): string {
   if (user.firstName && user.lastName) {
@@ -26,6 +27,26 @@ function getInitials(user: LoggedInUser): string {
     return user.email.slice(0, 2).toUpperCase();
   }
   return "?";
+}
+
+function mapSessionToAuth(session: Session | null): {
+  isLoggedIn: boolean;
+  user: LoggedInUser | null;
+} {
+  if (!session?.user) {
+    return { isLoggedIn: false, user: null };
+  }
+
+  const metadata = session.user.user_metadata ?? {};
+  return {
+    isLoggedIn: true,
+    user: {
+      id: session.user.id,
+      email: session.user.email ?? "",
+      firstName: metadata.first_name ?? "",
+      lastName: metadata.last_name ?? "",
+    },
+  };
 }
 
 export default function CustomHeader() {
@@ -41,8 +62,33 @@ export default function CustomHeader() {
   });
 
   useEffect(() => {
-    isLoggedInCheck().then(setAuth);
-  }, [auth]);
+    let cancelled = false;
+
+    isLoggedInCheck()
+      .then((result) => {
+        if (!cancelled) {
+          setAuth(result);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAuth({ isLoggedIn: false, user: null });
+        }
+      });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!cancelled) {
+        setAuth(mapSessionToAuth(session));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const isLoggedIn = auth.isLoggedIn;
 
@@ -65,6 +111,16 @@ export default function CustomHeader() {
     if (key === "home") router.push(routes.home);
     if (key === "dashboard") router.push(routes.dashboard);
     if (key === "details") router.push(routes.details);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setAuth({ isLoggedIn: false, user: null });
+      router.push(routes.home);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -146,10 +202,7 @@ export default function CustomHeader() {
               )}
               <Button
                 className="bg-green-500 text-white rounded-full"
-                onClick={() => {
-                  signOut();
-                  router.push(routes.home);
-                }}
+                onClick={handleLogout}
               >
                 Logout
               </Button>
