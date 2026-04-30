@@ -22,23 +22,28 @@ export default function HeroSectionSimpleCentred() {
           {/* End Title */}
           <div className="mx-auto mt-5 max-w-3xl text-center">
             <p className="text-muted-foreground text-xl">
-              Job Tailor creates personalized resumes, cover letters, and interview notes based on
-              the job description you provide and your saved profile details. Stand out with tailored applications.
+              Job Tailor creates personalized resumes, cover letters, and
+              interview notes based on the job description you provide and your
+              saved profile details. Stand out with tailored applications.
             </p>
           </div>
           {/* Buttons */}
           <div className="mt-8 flex justify-center gap-3">
-            <Button size={"lg"} onClick={() => router.push(routes.login)}>Login</Button>
-            <Button size={"lg"} variant={"outline"} onClick={() => router.push(routes.signup)}>
+            <Button size={"lg"} onClick={() => router.push(routes.login)}>
+              Login
+            </Button>
+            <Button
+              size={"lg"}
+              variant={"outline"}
+              onClick={() => router.push(routes.signup)}
+            >
               Signup
             </Button>
           </div>
           {/* End Buttons */}
           <div className="mt-5 flex items-center justify-center gap-x-1 sm:gap-x-3">
-            <span className="text-muted-foreground text-sm">
-              Trusted by:
-            </span>
-            <span className="text-sm font-bold">10,000+ Job Seekers</span>
+            <span className="text-muted-foreground text-sm">Trusted by:</span>
+            <span className="text-sm font-bold">20,000+ Job Seekers</span>
             <svg
               className="text-muted-foreground h-5 w-5"
               width={16}
@@ -47,10 +52,7 @@ export default function HeroSectionSimpleCentred() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
-            >
-             
-            </svg>
-            
+            ></svg>
           </div>
         </div>
       </div>

@@ -109,7 +109,7 @@ export default function Details() {
   if (!auth.user) {
     return (
       <div className="flex flex-col gap-4 justify-center items-center">
-        <Empty description="No user details found" />
+        <Empty description="User Details Not Found" />
         <Button
           className="w-[10rem]"
           variant={"default"}

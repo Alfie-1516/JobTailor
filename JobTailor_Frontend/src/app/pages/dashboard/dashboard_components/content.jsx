@@ -51,7 +51,7 @@ export default function Content({ setCurrentPage }) {
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [setCurrentPage]);
 
   const handleStage1Data = (data) => {
     setFormData((prev) => ({ ...prev, stage1: data }));
