@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import CustomHeader from "@/components/layout/Header";
 import CustomFooter from "@/components/layout/Footer";
+import AntdCompatibilityProvider from "@/components/providers/AntdCompatibilityProvider";
 import { UserProvider } from "@/context/UserContext";
 
 const geistSans = Geist({
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col mr-20 ml-20 `}
       >
-        <UserProvider>
-          <CustomHeader />
-          <main className="flex-1 flex bg-white overflow-hidden justify-center">
-            {children}
-          </main>
-          <CustomFooter />
-        </UserProvider>
+        <AntdCompatibilityProvider>
+          <UserProvider>
+            <CustomHeader />
+            <main className="flex-1 flex bg-white overflow-hidden justify-center">
+              {children}
+            </main>
+            <CustomFooter />
+          </UserProvider>
+        </AntdCompatibilityProvider>
       </body>
     </html>
   );
